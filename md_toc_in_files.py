@@ -2,7 +2,7 @@ import os
 import re
 
 # Lista de archivos a ignorar
-IGNORAR = ['README.md', '.DS_Store', '.idea', 'footage']
+IGNORAR = ['README.md', '.DS_Store', '.idea', 'footage', 'planning', 'exercices', 'tools']
 TOC_INICIO = "<!-- TOC INICIO -->"
 TOC_FIN = "<!-- TOC FIN -->"
 
@@ -10,6 +10,12 @@ TOC_FIN = "<!-- TOC FIN -->"
 def es_archivo_ignorado(nombre):
     """Función para ignorar archivos ocultos o que están en la lista de ignorados."""
     return nombre.startswith('.') or nombre in IGNORAR
+
+
+def es_parte_de_ruta_ignorada(nombre):
+    """Función para ignorar directorios que están en la lista de ignorados."""
+    ingnorar = [s for s in IGNORAR if s in nombre]
+    return ingnorar
 
 
 def generar_slug(heading):
@@ -25,7 +31,8 @@ def generar_slug(heading):
 
 def generar_toc_para_archivo(ruta_archivo):
     """
-    Genera el TOC basado en los encabezados dentro de un archivo Markdown.
+    Genera el TOC basado en los encabezados dentro de un archivo Markdown,
+    ignorando aquellos que estén dentro de bloques de código.
 
     Args:
         ruta_archivo (str): Ruta del archivo Markdown.
@@ -34,8 +41,18 @@ def generar_toc_para_archivo(ruta_archivo):
         str: TOC en formato markdown.
     """
     toc = []
+    dentro_bloque_codigo = False  # Estado para saber si estamos dentro de un bloque de código
+
     with open(ruta_archivo, 'r', encoding='utf-8') as archivo:
         for linea in archivo:
+            # Detectar inicio o fin de un bloque de código con ```
+            if linea.strip().startswith("```"):
+                dentro_bloque_codigo = not dentro_bloque_codigo
+                continue  # Ignorar la línea que contiene ``` ya que no es un encabezado
+
+            if dentro_bloque_codigo:
+                continue  # Ignorar cualquier línea dentro de un bloque de código
+
             # Buscar líneas que comiencen con uno o más `#` para detectar encabezados
             if linea.startswith('#'):
                 nivel = linea.count('#')  # El nivel se define por el número de `#`
@@ -77,14 +94,25 @@ def procesar_archivos_markdown(ruta_base):
     sustituyendo el TOC en cada uno de ellos.
 
     Args:
-        ruta_base (str): Ruta base del directorio.
+        ruta_base (str): Ruta base del directorio o archivo Markdown.
     """
-    for directorio_actual, subdirectorios, archivos in os.walk(ruta_base):
-        for archivo in archivos:
-            if archivo.endswith('.md') and not es_archivo_ignorado(archivo):
-                ruta_archivo = os.path.join(directorio_actual, archivo)
-                toc = generar_toc_para_archivo(ruta_archivo)
-                actualizar_toc_en_archivo_markdown(ruta_archivo, toc)
+    if os.path.isfile(ruta_base) and ruta_base.endswith('.md'):
+        # Si es un archivo Markdown, procesar solo ese archivo
+        toc = generar_toc_para_archivo(ruta_base)
+        actualizar_toc_en_archivo_markdown(ruta_base, toc)
+    elif os.path.isdir(ruta_base):
+        # Si es un directorio, procesar todos los archivos Markdown en el directorio
+        for directorio_actual, subdirectorios, archivos in os.walk(ruta_base):
+            if es_parte_de_ruta_ignorada(directorio_actual):
+                continue
+
+            for archivo in archivos:
+                if archivo.endswith('.md') and not es_archivo_ignorado(archivo):
+                    ruta_archivo = os.path.join(directorio_actual, archivo)
+                    toc = generar_toc_para_archivo(ruta_archivo)
+                    actualizar_toc_en_archivo_markdown(ruta_archivo, toc)
+    else:
+        print(f"La ruta proporcionada no es un archivo .md válido o un directorio: {ruta_base}")
 
 
 if __name__ == "__main__":
