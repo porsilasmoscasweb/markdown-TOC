@@ -2,7 +2,7 @@ import os
 import re
 
 # Lista de archivos a ignorar
-IGNORAR = ['README.md', '.DS_Store', '.idea', 'footage', 'planning', 'exercices', 'tools']
+IGNORAR = ['README.md', '.DS_Store', '.idea', 'footage', 'planning', 'exercices', 'tools', 'planning']
 TOC_INICIO = "<!-- TOC INICIO -->"
 TOC_FIN = "<!-- TOC FIN -->"
 
