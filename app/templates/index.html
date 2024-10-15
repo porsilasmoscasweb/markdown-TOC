@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown Processor</title>
+</head>
+<body>
+    <h1>Subir archivo Markdown para generar TOC</h1>
+    <form action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data">
+        <label for="file">Selecciona un archivo Markdown:</label>
+        <input type="file" id="file" name="file">
+        <button type="submit">Subir y Procesar</button>
+    </form>
+</body>
+</html>
