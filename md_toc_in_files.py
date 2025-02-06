@@ -3,7 +3,7 @@ import os
 import re
 
 # Lista de archivos a ignorar
-IGNORAR = ['README.md', '.DS_Store', '.idea', 'footage', 'planning', 'exercices', 'tools', 'planning']
+IGNORAR = ['README.md', '.DS_Store', '.gitignore', '.idea', 'books', 'exercices', 'footage', 'planning', 'tools']
 TOC_INICIO = "<!-- TOC INICIO -->"
 TOC_FIN = "<!-- TOC FIN -->"
 
@@ -118,5 +118,7 @@ def procesar_archivos_markdown(ruta_base):
 
 if __name__ == "__main__":
     ruta_directorio = input("Introduce el path del directorio base: ")
-    procesar_archivos_markdown(ruta_directorio)
+    ignorar_directorio = input("Algun directorio a ignorar: ")
+    IGNORAR += ignorar_directorio.split()
+    procesar_archivos_markdown(ruta_directorio.strip())
     print("Archivos Markdown procesados con éxito.")
