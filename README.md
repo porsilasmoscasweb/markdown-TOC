@@ -1,5 +1,9 @@
 # TOC MARKDOWN
 
+```python
+python3 md_toc.py
+```
+
 ## md_toc.py
 
 Desde una ruta entrada por el usuario.
