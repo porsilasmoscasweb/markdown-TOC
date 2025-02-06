@@ -30,6 +30,7 @@ Ordenar alfabéticamente los archivos y directorios raíz.
 Ignorar archivos ocultos y un listado predefinido.
 El archivo generado debe llamarse README.md.
 
+
 ## md_toc_in_files.py
 
 Por cada fichero markdown que encuentre:
@@ -37,6 +38,11 @@ Por cada fichero markdown que encuentre:
 * Creará un tag de inició y fin de TOC.
   * Dentro de este generarà el TOC del fichero
   * Añadirá el enlace al tag interno del fichero
+
+ 
+## md_toc_in_files_orderBy.py
+
+Por cada fichero markdown que encuentre con la cabecera `[//]: <> (order:asc)` este será ordenado de la forma indicada
 
 
 ## APP
