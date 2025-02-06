@@ -2,7 +2,7 @@
 import os
 
 # Lista de archivos a ignorar
-IGNORAR = ['README.md', '.DS_Store', '.idea', 'footage']
+IGNORAR = ['README.md', '.DS_Store', '.gitignore', '.idea', 'footage', 'planning']
 
 
 def es_archivo_ignorado(nombre):
@@ -83,6 +83,7 @@ def crear_readme_toc(ruta_base):
     Args:
         ruta_base (str): Ruta base del directorio.
     """
+    print(IGNORAR)
     toc = generar_toc_markdown(ruta_base, es_raiz=True)
 
     # Guardar el TOC en el archivo README.md
@@ -93,5 +94,7 @@ def crear_readme_toc(ruta_base):
 
 if __name__ == "__main__":
     ruta_directorio = input("Introduce el path del directorio base: ")
-    crear_readme_toc(ruta_directorio)
+    ignorar_directorio = input("Algun directorio a ignorar: ")
+    IGNORAR += ignorar_directorio.split()
+    crear_readme_toc(ruta_directorio.strip())
     print("Archivo README.md generado con éxito.")
