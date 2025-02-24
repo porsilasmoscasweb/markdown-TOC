@@ -1,11 +1,32 @@
 import re
 
 def ordenar_markdown(markdown):
-    # Extraer encabezados con su contenido
+    # Detectar bloques de código o texto que deben ser ignorados
+    patrones_bloques = [
+        r'```.*?```',   # Bloques de código con backticks
+        r"'''.*?'''",   # Bloques con comillas simples triples
+        r'""".*?"""',   # Bloques con comillas dobles triples
+        r"'[^']*'",     # Comillas simples
+        r'"[^"]*"',     # Comillas dobles
+        r'<!--.*?-->',   # Comentarios HTML
+    ]
+
+    # Combinar todos los patrones en una sola expresión regular
+    bloques_pattern = re.compile('|'.join(patrones_bloques), re.DOTALL)
+    bloques_ignorados = []
+
+    # Reemplazar temporalmente los bloques con marcadores
+    def reemplazar_bloque(match):
+        bloques_ignorados.append(match.group(0))
+        return f"__BLOQUE_IGNORADO_{len(bloques_ignorados) - 1}__"
+
+    markdown_sin_bloques = bloques_pattern.sub(reemplazar_bloque, markdown)
+
+    # Extraer encabezados con su contenido fuera de los bloques ignorados
     pattern = re.compile(r'^(#+\s+.*)(?:\n(.*?))?(?=^#+\s+|\Z)', re.DOTALL | re.MULTILINE)
     secciones = []
 
-    for match in pattern.finditer(markdown):
+    for match in pattern.finditer(markdown_sin_bloques):
         encabezado = match.group(1).strip()
         contenido = match.group(2).strip() if match.group(2) else ''
         nivel = len(re.match(r'^(#+)', encabezado).group(1))
@@ -45,7 +66,15 @@ def ordenar_markdown(markdown):
         return resultado
 
     lineas_ordenadas = reconstruir_markdown(estructura)
-    return '\n\n'.join(lineas_ordenadas)
+    markdown_ordenado = '\n\n'.join(lineas_ordenadas)
+
+    # Restaurar los bloques ignorados en su posición original
+    def restaurar_bloques(texto):
+        for i, bloque in enumerate(bloques_ignorados):
+            texto = texto.replace(f"__BLOQUE_IGNORADO_{i}__", bloque)
+        return texto
+
+    return restaurar_bloques(markdown_ordenado)
 
 # 📥 Leer el contenido desde un archivo
 def leer_markdown(nombre_archivo):
@@ -65,4 +94,4 @@ markdown = leer_markdown(entrada)
 markdown_ordenado = ordenar_markdown(markdown)
 guardar_markdown(salida, markdown_ordenado)
 
-print(f"El Markdown ha sido ordenado y guardado en '{salida}'.")
+print(f"El Markdown ha sido ordenado (ignorando encabezados en bloques de código, comillas y comentarios HTML) y guardado en '{salida}'.")
