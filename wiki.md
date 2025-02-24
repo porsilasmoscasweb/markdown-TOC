@@ -1077,3 +1077,6 @@ durante el proceso de conexión, permitiendo a los usuarios acceder y administra
 #### VISUALIZACIÓN DE LOS PROCESOS EN UN ORDENADOR
 
 Para ver el funcionamiento de los nucleos de nuestro ordenador lo podemos hacer desde `terminal` con el comando `htop`.
+
+## aaa
+aaaasdfasf

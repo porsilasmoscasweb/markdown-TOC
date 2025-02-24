@@ -91,16 +91,16 @@ class MarkdownOrdenador:
             archivo.write(contenido)
 
 
-# # 📌 Uso de la clase
-# entrada = '/home/egarriga/Documents/markdown-TOC/entrada.md'  # Archivo de entrada
-# salida = '/home/egarriga/Documents/markdown-TOC/salida.md'    # Archivo de salida
-#
-# # Crear instancia de la clase
-# ordenador = MarkdownOrdenador()
-#
-# # Leer, ordenar y guardar el Markdown
-# markdown = MarkdownOrdenador.leer_markdown(entrada)
-# markdown_ordenado = ordenador.ordenar(markdown)
-# MarkdownOrdenador.guardar_markdown(salida, markdown_ordenado)
-#
-# print(f"El Markdown ha sido ordenado (ignorando encabezados en bloques de código, comillas y comentarios HTML) y guardado en '{salida}'.")
+# 📌 Uso de la clase
+entrada = '/home/egarriga/Documents/markdown-TOC/entrada.md'  # Archivo de entrada
+salida = '/home/egarriga/Documents/markdown-TOC/salida.md'    # Archivo de salida
+
+# Crear instancia de la clase
+ordenador = MarkdownOrdenador()
+
+# Leer, ordenar y guardar el Markdown
+markdown = MarkdownOrdenador.leer_markdown(entrada)
+markdown_ordenado = ordenador.ordenar(markdown)
+MarkdownOrdenador.guardar_markdown(salida, markdown_ordenado)
+
+print(f"El Markdown ha sido ordenado (ignorando encabezados en bloques de código, comillas y comentarios HTML) y guardado en '{salida}'.")

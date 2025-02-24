@@ -30,3 +30,9 @@ Descripción de B0.
 # Este es un encabezado en un comentario HTML que debe ser ignorado
 ## H2 dentro de comentario HTML
 -->
+
+## B1
+asdf
+
+# A0
+asdfas
