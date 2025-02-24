@@ -1,5 +1,5 @@
 import argparse
-from TOC_sort import MarkdownOrdenador
+from classes.TOC_files_sort import  MarkdownOrdenador
 
 def main():
     parser = argparse.ArgumentParser(

@@ -39,6 +39,14 @@ Por cada fichero markdown que encuentre:
   * Dentro de este generarà el TOC del fichero
   * Añadirá el enlace al tag interno del fichero
 
+
+## md_toc_in_files_sort.py
+
+Por cada fichero markdown que encuentre con la cabecera `[//]: <> (order:asc)` este será ordenado de la forma indicada.
+
+Importaremos TOC_sort.py y su Classe `MarkdownOrdenador`, que será la encargada de ordenar el fichero y crear el TOC del mismo.
+
+Basicamente es lo mismo que el fichero anterior, pero le añadimos la nueva funcionalidad
  
 ## md_toc_in_files_orderBy.py [IN PROCESS]
 

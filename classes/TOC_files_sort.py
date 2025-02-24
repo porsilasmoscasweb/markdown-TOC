@@ -80,3 +80,11 @@ class MarkdownOrdenador:
     def guardar_markdown(nombre_archivo, contenido):
         with open(nombre_archivo, 'w', encoding='utf-8') as archivo:
             archivo.write(contenido)
+
+# Ejecutar fichero
+# if __name__ == '__main__':
+#     order = 'asc'
+#     ordenador = MarkdownOrdenador()
+#     markdown = MarkdownOrdenador.leer_markdown(input('Origin Path: '))
+#     markdown_ordenado = ordenador.ordenar(markdown, ascendente=(order == 'asc'))
+#     MarkdownOrdenador.guardar_markdown(markdown_ordenado)
