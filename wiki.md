@@ -1,86 +1,7 @@
-[//]: <> (order:asc)
-
-<!-- TOC INICIO -->
-- [WIKI](#wiki)
-  - [ACCESS LOG](#access-log)
-  - [ACCESS LOG FORMAT](#access-log-format)
-  - [Border Gateway Protocol _(BGP)_](#border-gateway-protocol-_bgp_)
-  - [CINI](#cini)
-  - [CLUSTER](#cluster)
-  - [CNEA](#cnea)
-  - [COVERAGE](#coverage)
-  - [CYTHON](#cython)
-  - [DIRECCIÓ IP](#direcció-ip)
-  - [E-SIOS](#e-sios)
-  - [ERP](#erp)
-  - [ERPPEEK](#erppeek)
-  - [GITHUB](#github)
-  - [GRAFANA](#grafana)
-  - [GTK](#gtk)
-  - [INTERFAZ](#interfaz)
-  - [LOOPBACK](#loopback)
-  - [MESSAGEAPCK (MsgPack)](#messageapck-msgpack)
-  - [NETWORK](#network)
-  - [NGINX](#nginx)
-  - [DIFENTES PARTES DEL SISTEMA](#difentes-partes-del-sistema)
-    - [CPU (Central Processing Unit)](#cpu-central-processing-unit)
-    - [GPU (graphics Processing Unit)](#gpu-graphics-processing-unit)
-    - [ALMACENAMIENTO](#almacenamiento)
-      - [ALMACENAMIENTO PRIMARIO RAM (Memoria de Acceso Aleatorio)](#almacenamiento-primario-ram-memoria-de-acceso-aleatorio)
-      - [ALMACENAMIENTO SECUNDARIO](#almacenamiento-secundario)
-      - [ALMACENAMIENTO EN LA NUBE](#almacenamiento-en-la-nube)
-    - [SWAP (ESpacio de Intercambio)](#swap-espacio-de-intercambio)
-      - [Recomendaciones para la Tamaño del Espacio de Intercambio](#recomendaciones-para-la-tamaño-del-espacio-de-intercambio)
-  - [CUELLOS DE BOTELLA](#cuellos-de-botella)
-  - [NUCLEOS DE UN ORDENADOR](#nucleos-de-un-ordenador)
-  - [TECNOLOGIA LOW CODE](#tecnologia-low-code)
-  - [OOJS-UI.js](#oojs-uijs)
-  - [PANDAS](#pandas)
-  - [PEP8](#pep8)
-  - [PIP](#pip)
-  - [POSTGIS (la extensión para datos espaciales)](#postgis-la-extensión-para-datos-espaciales)
-  - [POWERERPjs](#powererpjs)
-  - [PUDB](#pudb)
-  - [PYPOWER](#pypower)
-  - [PYTHON](#python)
-  - [RECORE](#recore)
-  - [RTU](#rtu)
-  - [SABT (supervisión avanazada de baja tensión)](#sabt-supervisión-avanazada-de-baja-tensión)
-  - [SENTRY](#sentry)
-  - [SERVEI AUXILIAR RECORE](#servei-auxiliar-recore)
-  - [SSH (Secure Shell)](#ssh-secure-shell)
-  - [STAND-ALONE _(autónomo)_](#stand-alone-_autónomo_)
-  - [TCP/IP](#tcpip)
-  - [TIMESCALE](#timescale)
-  - [TMUX](#tmux)
-  - [TRAFO](#trafo)
-  - [WAYLAND](#wayland)
-  - [WSGI](#wsgi)
-  - [X11 (x.org)](#x11-xorg)
-  - [XML-RPC](#xml-rpc)
-  - [psycopg2](#psycopg2)
-  - [virtualenvwrapper (LIB)](#virtualenvwrapper-lib)
-    - [Conceptes fundementals](#conceptes-fundementals)
-    - [Cómo funcionan los sistemas de ERP](#cómo-funcionan-los-sistemas-de-erp)
-    - [FITXER CONFIG](#fitxer-config)
-    - [PIPCOVERALL](#pipcoverall)
-    - [Pandapower](#pandapower)
-    - [Python es caracteritza per ser un llenguatge:](#python-es-caracteritza-per-ser-un-llenguatge)
-    - [SETUPTOOLS](#setuptools)
-    - [Us](#us)
-      - [Características clave](#características-clave)
-      - [Funcionamiento](#funcionamiento)
-      - [Funcionamiento](#funcionamiento)
-      - [Sierve para](#sierve-para)
-      - [Uso común](#uso-común)
-      - [VISUALIZACIÓN DE LOS PROCESOS EN UN ORDENADOR](#visualización-de-los-procesos-en-un-ordenador)
-<!-- TOC FIN -->
-
 # WIKI
 
-
-
-
+## aaa
+aaaasdfasf
 
 ## ACCESS LOG
 
@@ -97,10 +18,6 @@ lo que permite a los administradores del sitio personalizar la experiencia de lo
 En un servidor web, el access log es un archivo o grupo de archivos que contiene una lista de cada archivo que fue accedido en el servidor. 
 Este registro se genera de forma automática por el servidor web, que registra la información de cada solicitud realizada a través de los protocolos HTTP o HTTPS. 
 La información registrada puede ser analizada utilizando software especializado que permite filtrar, clasificar y visualizar los registros.
-
-
-
-
 
 ## ACCESS LOG FORMAT
 
@@ -171,14 +88,6 @@ Comisión Nacional de Energía Atómica
 ## COVERAGE
 
 Percentage de codi que forma part d'un TEST.
-
-
-
-
-
-
-
-
 
 ## CYTHON
 
@@ -504,14 +413,6 @@ PEP8 és una guia d'estil per escriure codi Python. Proporciona convencions per 
 organitzar el codi i donar-li format per a la seva llegibilitat. Les directrius no són obligatòries, però ajuden a escriure 
 codi que sigui fàcil de llegir i entendre
 
-
-
-
-
-
-
-
-
 ## PIP
 
 Lo que vindria a ser (ARCHIVA de JAVA)
@@ -519,14 +420,6 @@ Lo que vindria a ser (ARCHIVA de JAVA)
 PIP es un sistema de gestión de paquetes utilizado para instalar y administrar paquetes de software escritos en Python. 
 Muchos paquetes pueden ser encontrados en el Python Package Index (PyPI). Python 2.7.9 y posteriores (en la serie Python2), 
 Python 3.4 y posteriores incluyen pip (pip3 para Python3) por defecto.
-
-
-
-
-
-
-
-
 
 ## POSTGIS (la extensión para datos espaciales)
 
@@ -541,23 +434,7 @@ provee funciones de análisis, transformación y consulta espaciales.
 velocidad de procesamiento gracias a índices espaciales.
 herramientas de geocodificación, 3D, topología, cálculo de rutas…
 
-
-
-
-
-
-
-
-
 ## POWERERPjs
-
-
-
-
-
-
-
-
 
 ## PUDB
 
@@ -572,37 +449,13 @@ Las características clave de Pudb incluyen:
 * Compatibilidad con teclas de acceso rápido para realizar acciones comunes sin tener que escribir comandos completos.
 * La posibilidad de enviar solicitudes de ayuda y parches a través de una lista de correo o como solicitudes de extracción en el repositorio de GitHub.
 
-
-
-
-
-
-
-
-
 ## PYPOWER
-
-
-
-
-
-
-
-
 
 ## PYTHON
 
 Python es un lenguaje de programación de código abierto, creado por Guido van Rossum en 1991. Se trata de un lenguaje orientado a objetos, fácil de interpretar y con una sintaxis que permite leerlo de manera semejante a como se lee el inglés. Es un lenguaje interpretado, esto significa que el código de programación se convierte en bytecode y luego se ejecuta por el intérprete, que, en este caso, es la máquina virtual de Python.
 
 > Treballar amb el “ipython” de l’entorn visual “enviromenterp” `workon <repo>`.
-
-
-
-
-
-
-
-
 
 ## RECORE
 
@@ -612,36 +465,11 @@ Renovable
 Cogeneració
 Residus
 
-
-
-
-
-
-
-
-
 ## RTU
-
-
-
-
-
-
-
-
 
 ## SABT (supervisión avanazada de baja tensión)
 
-
-
-
-
 ## SENTRY
-
-
-
-
-
 
 ## SERVEI AUXILIAR RECORE
 
@@ -649,27 +477,11 @@ Contracta per consum mínim d'un RECORE.
 
 Tot RECORE té un mínim consum per fer anar les màquines que generen l'electriciat. Pel que ens necessari que tinguin un contracta associat.
 
-
-
-
-
-
-
-
-
 ## SSH (Secure Shell)
 
 SSH (Secure Shell) es un protocolo de comunicación seguro que permite acceder de forma remota a servidores y sistemas informáticos,
 garantizando la integridad y confidencialidad de la información durante el proceso de conexión. Fue creado en 1995 por Tatu Ylonen 
 como respuesta a un robo de contraseñas en un servidor de la Universidad de Finlandia, donde el tráfico viajaba sin cifrar.
-
-
-
-
-
-
-
-
 
 ## STAND-ALONE _(autónomo)_
 
@@ -685,36 +497,11 @@ Un programa standalone sería entonces aquel que puedes ejecutar en un computado
 
 También otro uso podría ser un programa que no necesita ser interpretado para funcionar, ya que ese interpretador sería como otro software que tendría que estar instalado en el ordenador y por tanto el sistema no sería totalmente autónomo. Si ya se compila el software, por ejemplo, el código de C y se crea el ejecutable, entonces podría ser un programa standalone, si es que no requiere una vez compilado de otros sistemas para funcionar.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ## TCP/IP
 
 El modelo TCP/IP es usado para comunicaciones en redes y, como todo protocolo, describe un conjunto de guías generales 
 de operación para permitir que un equipo pueda comunicarse en una red. TCP/IP provee conectividad de extremo a extremo 
 especificando cómo los datos deberían ser formateados, direccionados, transmitidos, enrutados y recibidos por el destinatario.
-
-
-
-
-
-
-
 
 ## TIMESCALE
 
@@ -722,38 +509,13 @@ Timescale es una base de datos de series temporales creada para manejar grandes 
 
 Timescale combina las ventajas de una base de datos relacional con la escalabilidad y flexibilidad necesarias para trabajar con datos temporales a gran escala. Está construida como una extensión de PostgreSQL, lo que significa que se puede utilizar con las herramientas y el lenguaje SQL que ya conoces y aprovechar la robustez de PostgreSQL.
 
-
-
-
-
-
-
-
-
 ## TMUX
 
 Tmux és el que es coneix com un multiplexor de terminals que et permet crear, administrar i personalitzar sessions a la terminal de Linux. Amb TMUX, pots dividir el teu terminal en panells i finestres, mantenir sessions persistents fins i tot després de tancar la terminal, i accedir a múltiples sessions simultàniament. Aquesta flexibilitat i personalització fan de TMUX una de les meves eines preferides per millorar el meu flux de treball a la terminal.
 
-
-
-
-
-
-
-
-
 ## TRAFO
 
 Vulgarment dit "Transformador".
-
-
-
-
-
-
-
-
-
 
 ## WAYLAND
 
@@ -764,15 +526,6 @@ Wayland es un conjunto de protocolos que rigen cómo un compositor gráfico de u
 Es similar a los protocolos HTTP y SMTP que rigen cómo los navegadores web y los clientes de correo electrónico envían y reciben páginas web y datos.
 
 Wayland también incluye una implementación de esos protocolos en un conjunto de bibliotecas extremadamente livianas llamadas libwayland-client y libwayland-server que ofrecen API estables y versionadas. Aplicaciones y compositores como KWin de KDE y Mutter de GNOME utilizan esas API para hacer cosas.
-
-
-
-
-
-
-
-
-
 
 ## WSGI
 
@@ -788,23 +541,7 @@ como Apache, Nginx, Microsoft IIS, entre otros.
 En resumen, WSGI es un estándar que facilita la comunicación entre servidores web y aplicaciones web en Python, 
 permitiendo la compatibilidad y la escalabilidad de las aplicaciones web.
 
-
-
-
-
-
-
-
 ## X11 (x.org)
-
-
-
-
-
-
-
-
-
 
 ## XML-RPC
 
@@ -857,16 +594,7 @@ workon <enviroment>
 
 # Desectiva
 deactivate 
-```            
-
-
-
-
-
-
-
-
-
+```
 
 ### Conceptes fundementals
 
@@ -875,14 +603,6 @@ deactivate
 * **Herència**: ajuda a reduir la redundància, ja que permet aplicar un conjunt de propietats i mètodes a múltiples objectes, en lloc d'haver de repetir aquestes propietats i mètodes cada vegada. Els objectes poden heretar la informació, reduint així la quantitat total de codi que el programador ha d'escriure.## Workon
 * **Polimorfisme**: aporta flexibilitat, ja que, en comptes d'aplicar un mètode a un grup d'elements o objectes, els mètodes s'apliquen a objectes individuals i es poden executar de maneres diferents en funció del tipus d'objecte.The Workon command is a feature provided by the virtualenvwrapper tool for managing Python environments. It allows you to easily switch between different Python environments, and it also provides tab completion for the environment names.
 
-
-
-
-
-
-
-
-
 ### Cómo funcionan los sistemas de ERP
 
 Un sistema de ERP –también llamado "suite de ERP"– está compuesto por módulos integrados o aplicaciones de negocio que se hablan entre sí y comparten una base de datos común.
@@ -890,14 +610,6 @@ Un sistema de ERP –también llamado "suite de ERP"– está compuesto por mód
 Cada módulo de ERP generalmente se enfoca en un área del negocio, pero todos trabajan juntos usando los mismos datos para cumplir con las necesidades de la empresa. Finanzas, contabilidad, recursos humanos, ventas, procurement, logística y cadena de suministro son puntos de partida populares. Las empresas pueden elegir el módulo que deseen y agregar y escalar según sea necesario.
 
 Los sistemas de ERP también admiten requisitos específicos de la industria, ya sea como parte de la funcionalidad central del sistema o a través de extensiones de aplicaciones que se integran fluidamente con la suite.
-
-
-
-
-
-
-
-
 
 ### FITXER CONFIG
 
@@ -917,26 +629,6 @@ WaylandEnable=true
 ```
 sudo systemctl restart gdm3
 ```
-
-
-
-
-
-
-
-
-
-### PIPCOVERALL
-
-
-
-
-
-
-
-
-
-
 
 ### Pandapower
 
@@ -958,26 +650,12 @@ El que va començar com un embolcall de comoditat al voltant de PYPOWER s'ha con
 * **Multiplataforma**: els sistemes operatius més populars tenen el seu propi intèrpret de Python, per la qual cosa es pot fer servir el mateix codi en Windows, Linux i macOS.
 * **Tipat dinàmic**: les variables poden prendre valors de diferents tipus.
 * **Interpretat**: el codi de Python no es compila en el llenguatge del processador, al seu lloc es necessita un programa intèrpret que l'executi.
-            
 
-
-
-
-
-
-
+### PIPCOVERALL
 
 ### SETUPTOOLS
 
 Nos proporciona todo lo necesario para distribuir nuestros propios módulos e incluso nos permite publicar paquetes en el respositorio público PyPI (Python Package Index) de forma directa desde la propia terminal.
-
-
-
-
-
-
-
-
 
 ### Us
 
@@ -987,27 +665,11 @@ Nos proporciona todo lo necesario para distribuir nuestros propios módulos e in
 * AI & maching learning.
 * Blockchain.
 
-
-
-
-
-
-
-
-
 #### Características clave
 
 * **Cifrado**: SSH cifra todos los datos que se envían entre el cliente y el servidor, lo que evita que terceros intercepten y accedan a la información.
 * **Autenticación**: Requiere autenticación para conectar al servidor, lo que garantiza que solo los usuarios autorizados puedan acceder.
 * **Conexión segura**: SSH establece una conexión segura entre el cliente y el servidor, protegiendo contra ataques de tipo “man-in-the-middle” y evitando la manipulación de datos en tránsito.
-
-
-
-
-
-
-
-
 
 #### Funcionamiento
 
@@ -1016,28 +678,11 @@ para almacenar los datos temporales en el disco duro. Esto permite que el progra
 aunque no esté utilizando la memoria RAM. Cuando la memoria RAM se libera, los datos almacenados en el swap se recuperan 
 y se vuelven a cargar en la memoria RAM.
 
-
-
-
-
-
-
-
-
-
 #### Funcionamiento
 
 Un núcleo es una unidad de procesamiento que realiza determinadas acciones. Cada acción que ejecutas en tu ordenador 
 es procesada por tu CPU, sin importar lo pequeña o grande que sea la tarea. Los núcleos trabajan en paralelo, 
 lo que significa que pueden realizar varias tareas al mismo tiempo, lo que mejora el rendimiento general del sistema.
-
-
-
-
-
-
-
-
 
 #### Sierve para
 
@@ -1045,14 +690,6 @@ La extensión PostGIS habilita el soporte para trabajar con objetos geográficos
 
 En otras palabras: convierte PostgreSQL en una base de datos espacial, que en la práctica funciona 
 (quitando el apartado gráfico) exactamente como un auténtico Sistema de Información Geográfica de escritorio.
-
-
-
-
-
-
-
-
 
 #### Uso común
 
@@ -1066,17 +703,6 @@ SSH se utiliza comúnmente para:
 En resumen, SSH es un protocolo de acceso remoto seguro que garantiza la integridad y confidencialidad de la información
 durante el proceso de conexión, permitiendo a los usuarios acceder y administrar servidores y sistemas informáticos de forma segura y remota.
 
-
-
-
-
-
-
-
-
 #### VISUALIZACIÓN DE LOS PROCESOS EN UN ORDENADOR
 
 Para ver el funcionamiento de los nucleos de nuestro ordenador lo podemos hacer desde `terminal` con el comando `htop`.
-
-## aaa
-aaaasdfasf

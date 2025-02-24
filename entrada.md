@@ -6,6 +6,12 @@ Texto introductorio de H1.
 ## H2 en bloque de código
 ```
 
+## F1
+asdf
+
+## C0
+asdfas
+
 ## H2
 Contenido de H2.
 

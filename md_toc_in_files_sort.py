@@ -106,7 +106,7 @@ def check_to_sort(ruta_base):
         ordenador = MarkdownOrdenador()
         # Leer, ordenar y guardar el Markdown
         markdown = MarkdownOrdenador.leer_markdown(ruta_base)
-        markdown_ordenado = ordenador.ordenar(markdown)
+        markdown_ordenado = ordenador.ordenar(markdown, ascendente=(orden == 'asc'))
         MarkdownOrdenador.guardar_markdown(ruta_base, markdown_ordenado)
         return primera_linea
     return False
