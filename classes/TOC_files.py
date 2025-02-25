@@ -80,38 +80,29 @@ class MarkdownTOCUpdater:
             ruta_archivo (str): Ruta del archivo Markdown.
             toc (str): Contenido del TOC generado.
         """
+        nuevo_contenido = ""
         with open(ruta_archivo, 'r', encoding='utf-8') as archivo:
             contenido = archivo.read()
 
+        # Detectar si el archivo contiene la directiva de orden
+        match = re.match(r'\[\/\/\]:\s*<>\s*\(order:(asc|desc)\)', contenido)
+        if match:
+            nuevo_contenido = match.group()
+            contenido = contenido.split(match.group())[1]
+
         if self.TOC_INICIO in contenido and self.TOC_FIN in contenido:
             # Reemplazar TOC existente
-            nuevo_contenido = contenido.split(self.TOC_INICIO)[0] + self.TOC_INICIO + "\n" + toc + "\n" + self.TOC_FIN + \
+            nuevo_contenido += contenido.split(self.TOC_INICIO)[0] + self.TOC_INICIO + "\n" + toc + "\n" + self.TOC_FIN + \
                               contenido.split(self.TOC_FIN)[1]
         else:
             # Añadir TOC al principio
-            nuevo_contenido = self.TOC_INICIO + "\n" + toc + "\n" + self.TOC_FIN + "\n\n" + contenido
+            if match:
+                nuevo_contenido += "\n\n"
+            nuevo_contenido += self.TOC_INICIO + "\n" + toc + "\n" + self.TOC_FIN + "\n\n" + contenido
 
         # Escribir el contenido actualizado en el archivo
         with open(ruta_archivo, 'w', encoding='utf-8') as archivo:
             archivo.write(nuevo_contenido)
-
-    def check_to_sort(self, ruta_base):
-        # Procesar solo el archivo específico
-        with open(ruta_base, 'r', encoding='utf-8') as archivo:
-            primera_linea = archivo.readline().strip()
-
-        # Detectar si el archivo contiene la directiva de orden
-        match = re.match(r'\[\/\/\]:\s*<>\s*\(order:(asc|desc)\)', primera_linea)
-        if match:
-            orden = match.group(1)
-            # Crear instancia de la clase
-            ordenador = MarkdownOrdenador()
-            # Leer, ordenar y guardar el Markdown
-            markdown = MarkdownOrdenador.leer_markdown(ruta_base)
-            markdown_ordenado = ordenador.ordenar(markdown, ascendente=(orden == 'asc'))
-            MarkdownOrdenador.guardar_markdown(ruta_base, markdown_ordenado)
-            return primera_linea
-        return False
 
     def procesar_archivos_markdown(self, ruta_base):
         """
@@ -122,9 +113,6 @@ class MarkdownTOCUpdater:
             ruta_base (str): Ruta base del directorio o archivo Markdown.
         """
         if os.path.isfile(ruta_base) and ruta_base.endswith('.md'):
-            # Si el fichero tiene que ordenarse previamente
-            if self.sort:
-                primera_linea = self.check_to_sort(ruta_base)
             # Si es un archivo Markdown, procesar solo ese archivo
             toc = self.generar_toc_para_archivo(ruta_base)
             self.actualizar_toc_en_archivo_markdown(ruta_base, toc)
@@ -137,9 +125,6 @@ class MarkdownTOCUpdater:
                 for archivo in archivos:
                     if archivo.endswith('.md') and not self.es_archivo_ignorado(archivo):
                         ruta_archivo = os.path.join(directorio_actual, archivo)
-                        # Si el fichero tiene que ordenarse previamente
-                        if self.sort:
-                            primera_linea = self.check_to_sort(ruta_base)
                         toc = self.generar_toc_para_archivo(ruta_archivo)
                         self.actualizar_toc_en_archivo_markdown(ruta_archivo, toc)
         else:

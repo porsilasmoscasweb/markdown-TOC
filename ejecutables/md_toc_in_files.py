@@ -73,16 +73,25 @@ def actualizar_toc_en_archivo_markdown(ruta_archivo, toc):
         ruta_archivo (str): Ruta del archivo Markdown.
         toc (str): Contenido del TOC generado.
     """
+    nuevo_contenido = ""
     with open(ruta_archivo, 'r', encoding='utf-8') as archivo:
         contenido = archivo.read()
 
+    # Detectar si el archivo contiene la directiva de orden
+    match = re.match(r'\[\/\/\]:\s*<>\s*\(order:(asc|desc)\)', contenido)
+    if match:
+        nuevo_contenido = match.group()
+        contenido = contenido.split(match.group())[1]
+
     if TOC_INICIO in contenido and TOC_FIN in contenido:
         # Reemplazar TOC existente
-        nuevo_contenido = contenido.split(TOC_INICIO)[0] + TOC_INICIO + "\n" + toc + "\n" + TOC_FIN + \
+        nuevo_contenido += contenido.split(TOC_INICIO)[0] + TOC_INICIO + "\n" + toc + "\n" + TOC_FIN + \
                           contenido.split(TOC_FIN)[1]
     else:
         # Añadir TOC al principio
-        nuevo_contenido = TOC_INICIO + "\n" + toc + "\n" + TOC_FIN + "\n\n" + contenido
+        if match:
+            nuevo_contenido += "\n\n"
+        nuevo_contenido += TOC_INICIO + "\n" + toc + "\n" + TOC_FIN + "\n\n" + contenido
 
     # Escribir el contenido actualizado en el archivo
     with open(ruta_archivo, 'w', encoding='utf-8') as archivo:
@@ -117,8 +126,6 @@ def procesar_archivos_markdown(ruta_base):
 
 
 if __name__ == "__main__":
-    ruta_directorio = input("Introduce el path del directorio base: ")
-    ignorar_directorio = input("Algun directorio a ignorar: ")
-    IGNORAR += ignorar_directorio.split()
+    ruta_directorio = "/Users/egarriga/Git/markdown-TOC/memento_eje"
     procesar_archivos_markdown(ruta_directorio.strip())
-    print("Archivos Markdown procesados con éxito.")
+    print("Archivo README.md generado con éxito.")

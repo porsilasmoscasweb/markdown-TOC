@@ -93,8 +93,6 @@ def crear_readme_toc(ruta_base):
 
 
 if __name__ == "__main__":
-    ruta_directorio = input("Introduce el path del directorio base: ")
-    ignorar_directorio = input("Algun directorio a ignorar: ")
-    IGNORAR += ignorar_directorio.split()
+    ruta_directorio = "/Users/egarriga/Git/markdown-TOC/memento"
     crear_readme_toc(ruta_directorio.strip())
     print("Archivo README.md generado con éxito.")

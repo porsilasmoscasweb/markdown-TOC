@@ -37,8 +37,7 @@ class MarkdownConverter:
                                                    image_path)
 
                 # Generar ruta de salida para la imagen
-                relative_image_path = os.path.relpath(image_absolute_path,
-                                                      self.input_dir)
+                relative_image_path = os.path.relpath(image_absolute_path, self.input_dir)
                 output_image_path = os.path.join(self.output_dir, relative_image_path)
 
                 # Copiar la imagen al directorio de salida si existe
@@ -47,14 +46,33 @@ class MarkdownConverter:
                     shutil.copy2(image_absolute_path, output_image_path)
 
                 # Actualizar la ruta en el contenido Markdown
-                markdown_content = markdown_content.replace(image_path,
-                                                            os.path.relpath(
-                                                                output_image_path,
-                                                                os.path.dirname(
-                                                                    output_file)))
+                markdown_content = markdown_content.replace(image_path, os.path.relpath(output_image_path, os.path.dirname(output_file)))
+
+            html = markdown.markdown(markdown_content)
+
+            title = "MD HTML"
+            match = re.search(r"<h1.*?>(.*?)</h1>", html, re.DOTALL)
+            if match:
+                title = match.group(1)
+            # Convertir Markdown a HTML
+            head_content = f"""
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                    <meta charset="utf-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>{title.title()}</title>
+                    </head>
+                    <body>
+                    """
+
+            footer_content = """
+                    </body>
+                    </html>
+                    """
 
             # Convertir Markdown a HTML
-            html_content = markdown.markdown(markdown_content)
+            html_content = head_content + html + footer_content
 
             # Guardar el HTML en el archivo de salida
             with open(output_file, 'w', encoding='utf-8') as html_file:
@@ -77,9 +95,7 @@ class MarkdownConverter:
 
                         # Ruta correspondiente en el directorio de salida
                         relative_path = os.path.relpath(input_file, self.input_dir)
-                        output_file = os.path.join(self.output_dir,
-                                                   relative_path).replace(".md",
-                                                                          ".html")
+                        output_file = os.path.join(self.output_dir, relative_path).replace(".md", ".html")
 
                         # Convertir Markdown a HTML y manejar imágenes
                         self.convert_markdown_to_html_with_images(input_file, output_file)
