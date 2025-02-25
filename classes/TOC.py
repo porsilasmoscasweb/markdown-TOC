@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 
 class MarkdownTOCGenerator:
@@ -12,9 +13,11 @@ class MarkdownTOCGenerator:
             ignorar_directorios = []
         self.ruta_base = ruta_base
         self.ignorar = ['README.md', '.DS_Store', '.gitignore', '.idea', 'footage', 'planning'] + ignorar_directorios
+        # print(f"Ignorar configurado con: {self.ignorar}")
 
     def es_archivo_ignorado(self, nombre):
         """Función para ignorar archivos ocultos o que están en la lista de ignorados."""
+        # print(f"Verificando: {nombre}, Ignorar: {self.ignorar}")
         return nombre.startswith('.') or nombre in self.ignorar
 
     def formatear_nombre(self, nombre, es_directorio=False):
@@ -68,7 +71,7 @@ class MarkdownTOCGenerator:
 
             nombre_formateado = self.formatear_nombre(nombre, es_directorio=os.path.isdir(ruta_completa))
 
-            if os.path.isdir(ruta_completa):
+            if os.path.isdir(ruta_completa) and not os.path.islink(ruta_completa):
                 # Si es un directorio, agregar al TOC con enlace absoluto y procesar recursivamente
                 elementos.append(f"{'  ' * nivel}- {indice_actual} [{nombre_formateado}/]({ruta_absoluta}/)")
                 sub_elementos = self.generar_toc_markdown(ruta_completa, nivel + 1, indice_actual)

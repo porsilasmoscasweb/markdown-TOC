@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import re
-from classes.TOC_sort import MarkdownOrdenador
+from classes.TOC_files_sort import MarkdownOrdenador
 
 # Lista de archivos a ignorar
 IGNORAR = ['README.md', '.DS_Store', '.gitignore', '.idea', 'books', 'exercices', 'footage', 'planning', 'tools']

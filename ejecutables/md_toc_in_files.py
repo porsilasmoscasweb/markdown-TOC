@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
 import re
-from classes.TOC_sort import MarkdownOrdenador
 
 # Lista de archivos a ignorar
 IGNORAR = ['README.md', '.DS_Store', '.gitignore', '.idea', 'books', 'exercices', 'footage', 'planning', 'tools']
@@ -65,7 +64,7 @@ def generar_toc_para_archivo(ruta_archivo):
     return "\n".join(toc)
 
 
-def actualizar_toc_en_archivo_markdown(ruta_archivo, toc, primera_linea):
+def actualizar_toc_en_archivo_markdown(ruta_archivo, toc):
     """
     Actualiza el TOC en un archivo Markdown, añadiéndolo o sustituyéndolo
     entre los delimitadores TOC_INICIO y TOC_FIN.
@@ -73,7 +72,6 @@ def actualizar_toc_en_archivo_markdown(ruta_archivo, toc, primera_linea):
     Args:
         ruta_archivo (str): Ruta del archivo Markdown.
         toc (str): Contenido del TOC generado.
-        primera_linea (str/boolean): sort en la primera linea del fichero
     """
     with open(ruta_archivo, 'r', encoding='utf-8') as archivo:
         contenido = archivo.read()
@@ -88,28 +86,8 @@ def actualizar_toc_en_archivo_markdown(ruta_archivo, toc, primera_linea):
 
     # Escribir el contenido actualizado en el archivo
     with open(ruta_archivo, 'w', encoding='utf-8') as archivo:
-        if primera_linea:
-            archivo.write(primera_linea+"\n\n"+nuevo_contenido)
-        else:
-            archivo.write(nuevo_contenido)
+        archivo.write(nuevo_contenido)
 
-def check_to_sort(ruta_base):
-    # Procesar solo el archivo específico
-    with open(ruta_base, 'r', encoding='utf-8') as archivo:
-        primera_linea = archivo.readline().strip()
-
-    # Detectar si el archivo contiene la directiva de orden
-    match = re.match(r'\[\/\/\]:\s*<>\s*\(order:(asc|desc)\)', primera_linea)
-    if match:
-        orden = match.group(1)
-        # Crear instancia de la clase
-        ordenador = MarkdownOrdenador()
-        # Leer, ordenar y guardar el Markdown
-        markdown = MarkdownOrdenador.leer_markdown(ruta_base)
-        markdown_ordenado = ordenador.ordenar(markdown, ascendente=(orden == 'asc'))
-        MarkdownOrdenador.guardar_markdown(ruta_base, markdown_ordenado)
-        return primera_linea
-    return False
 
 def procesar_archivos_markdown(ruta_base):
     """
@@ -120,11 +98,9 @@ def procesar_archivos_markdown(ruta_base):
         ruta_base (str): Ruta base del directorio o archivo Markdown.
     """
     if os.path.isfile(ruta_base) and ruta_base.endswith('.md'):
-        # Si el fichero tiene que ordenarse previamente
-        primera_linea = check_to_sort(ruta_base)
         # Si es un archivo Markdown, procesar solo ese archivo
         toc = generar_toc_para_archivo(ruta_base)
-        actualizar_toc_en_archivo_markdown(ruta_base, toc, primera_linea)
+        actualizar_toc_en_archivo_markdown(ruta_base, toc)
     elif os.path.isdir(ruta_base):
         # Si es un directorio, procesar todos los archivos Markdown en el directorio
         for directorio_actual, subdirectorios, archivos in os.walk(ruta_base):
@@ -134,10 +110,8 @@ def procesar_archivos_markdown(ruta_base):
             for archivo in archivos:
                 if archivo.endswith('.md') and not es_archivo_ignorado(archivo):
                     ruta_archivo = os.path.join(directorio_actual, archivo)
-                    # Si el fichero tiene que ordenarse previamente
-                    primera_linea = check_to_sort(ruta_base)
                     toc = generar_toc_para_archivo(ruta_archivo)
-                    actualizar_toc_en_archivo_markdown(ruta_archivo, toc, primera_linea)
+                    actualizar_toc_en_archivo_markdown(ruta_archivo, toc)
     else:
         print(f"La ruta proporcionada no es un archivo .md válido o un directorio: {ruta_base}")
 
