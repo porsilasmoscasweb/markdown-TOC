@@ -1,10 +1,9 @@
 import os
 import re
 
-from classes.TOC_sort import MarkdownOrdenador
 
 class MarkdownTOCUpdater:
-    def __init__(self, ruta_base, ignorar_directorios=None, sort=False):
+    def __init__(self, ruta_base, ignorar_directorios=None):
         """
         Inicializa la clase con el directorio base y la lista de directorios a ignorar.
 
@@ -14,7 +13,6 @@ class MarkdownTOCUpdater:
         if ignorar_directorios is None:
             ignorar_directorios = []
         self.ruta_base = ruta_base
-        self.sort = sort
         self.ignorar = ['README.md', '.DS_Store', '.gitignore', '.idea', 'books', 'exercices', 'footage', 'planning', 'tools'] + ignorar_directorios
         self.TOC_INICIO = "<!-- TOC INICIO -->"
         self.TOC_FIN = "<!-- TOC FIN -->"
