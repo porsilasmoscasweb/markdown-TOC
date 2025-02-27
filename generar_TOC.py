@@ -13,6 +13,7 @@ from classes.TOC_html import MarkdownConverter
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generar TOC para archivos Markdown.")
+
     parser.add_argument(
         "ruta_directorio",
         type=str,
@@ -37,7 +38,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "--html",
         type=str,
-        default="_html",
+        nargs='*',
+        default=None,
         help="Genera un fichero HTML indicando la ruta de salida. Si no se especifica se generará la misma que entrada, añadiendo el sufijo '_html' al final de la ruta de entrada."
     )
 
@@ -45,6 +47,7 @@ if __name__ == "__main__":
 
     ruta_directorio = args.ruta_directorio
     ignorar = args.ignorar
+    files = args.files
     sort = args.sort
     html = args.html
 
@@ -53,21 +56,24 @@ if __name__ == "__main__":
     generador.crear_readme_toc()
 
     # Si se quiere realizar un TOC por cada uno de los ficheros .md
-    if args.files:
-        updater = MarkdownTOCUpdater(ruta_directorio, ignorar, sort)
+    if files:
+        updater = MarkdownTOCUpdater(ruta_directorio, ignorar)
         updater.procesar_archivos_markdown(ruta_directorio)
         print("Archivos Markdown procesados con éxito.")
 
     # Si solo se quiere ordenar los archivos .md que contiene cabezera que sencuentren dentro de la ruta porporcionada
     # TODO Recorrer rde forma recursiva en caso de no tener parametre --files
     # Intentar abrit archivos lo menos posible
-    if args.sort and not args.files:
+    if sort and not files:
         pass
 
     # Si se quiere crear archivos HTML a partir de los .md.
     # TODO tener en cuenta el estilo del HTML y del TOC a demás de modificar el slug para HTML.
-    if html:
-        if html == '_html':
-            html = ruta_directorio + html
-        html_converter = MarkdownConverter(ruta_directorio, html)
+    # Print the result
+    if html is not None:
+        if html == []:
+            html = '_default_value'
+        elif html:
+            html = html[0]
+        html_converter = MarkdownConverter(ruta_directorio, ruta_directorio + html)
         html_converter.process_directory_recursively_with_images()

@@ -94,5 +94,4 @@ class MarkdownTOCGenerator:
         with open(os.path.join(self.ruta_base, 'README.md'), 'w') as archivo_readme:
             archivo_readme.write("# Tabla de Contenidos\n\n")
             archivo_readme.write(toc)
-
-        print("Archivo README.md generado con éxito.")
+            print("Archivo README.md generado con éxito.")
