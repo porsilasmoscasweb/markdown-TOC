@@ -29,6 +29,14 @@ class MarkdownConverter:
             with open(input_file, 'r', encoding='utf-8') as md_file:
                 markdown_content = md_file.read()
 
+            # TODO : Modificafr el link. ruta_entrada por ruta_salida i extencion .md por .html
+            # Extraer el TOC entre las etiquetas <!-- TOC INICIO --> y <!-- TOC FIN -->
+            toc_match = re.search(r"<!-- TOC INICIO -->(.*?)<!-- TOC FIN -->", markdown_content, re.DOTALL)
+            if toc_match:
+                toc_markdown = toc_match.group(1).strip()
+                toc_html = self.convert_toc_markdown_to_html(toc_markdown)
+                markdown_content = markdown_content.replace(toc_match.group(0), toc_html)
+
             # Buscar imágenes en el contenido Markdown
             image_paths = re.findall(r'!\[.*?\]\((.*?)\)', markdown_content)
             for image_path in image_paths:
@@ -81,6 +89,42 @@ class MarkdownConverter:
             print(f"Convertido: {input_file} -> {output_file}")
         except Exception as e:
             print(f"Error al procesar {input_file}: {e}")
+
+    def convert_toc_markdown_to_html(toc_markdown):
+        """
+        Convierte el TOC en formato Markdown a una lista HTML anidada,
+        reemplazando los enlaces con la versión .html.
+
+        :param toc_markdown: Texto del TOC en Markdown.
+        :return: TOC convertido en HTML con enlaces correctos.
+        """
+        lines = toc_markdown.strip().split("\n")
+        html_toc = []
+        prev_indent = 0
+
+        for line in lines:
+            match = re.match(r"(\s*)- \[(.*?)\]\((.*?)\)", line)
+            if match:
+                indent = len(match.group(1)) // 2  # Cada 2 espacios = 1 nivel de indentación
+                text = match.group(2)
+                link = match.group(3)
+
+                # Convertir .md a .html si el enlace apunta a un archivo Markdown
+                if link.endswith(".md"):
+                    link = link.replace(".md", ".html")
+
+                if indent > prev_indent:
+                    html_toc.append("<ul>" * (indent - prev_indent))
+                elif indent < prev_indent:
+                    html_toc.append("</ul>" * (prev_indent - indent))
+
+                html_toc.append(f'<li><a href="{link}">{text}</a></li>')
+                prev_indent = indent
+
+        # Cerrar listas abiertas
+        html_toc.append("</ul>" * prev_indent)
+
+        return "\n".join(html_toc)
 
     def process_directory_recursively_with_images(self):
         """

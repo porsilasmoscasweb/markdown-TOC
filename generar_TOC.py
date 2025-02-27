@@ -72,7 +72,7 @@ if __name__ == "__main__":
     # Print the result
     if html is not None:
         if html == []:
-            html = '_default_value'
+            html = '_html'
         elif html:
             html = html[0]
         html_converter = MarkdownConverter(ruta_directorio, ruta_directorio + html)
