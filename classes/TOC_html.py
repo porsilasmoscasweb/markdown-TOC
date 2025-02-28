@@ -14,6 +14,10 @@ class MarkdownConverter:
         self.input_dir = input_dir
         self.output_dir = output_dir
 
+    import re
+
+
+
     def convert_markdown_to_html_with_images(self, input_file, output_file):
         """
         Convierte un archivo Markdown a HTML y copia imágenes referenciadas.
@@ -29,7 +33,11 @@ class MarkdownConverter:
             with open(input_file, 'r', encoding='utf-8') as md_file:
                 markdown_content = md_file.read()
 
-            # TODO : Modificafr el link. ruta_entrada por ruta_salida i extencion .md por .html
+            # Clean the text
+            sort_match = re.match(r'\[\/\/\]:\s*<>\s*\(order:(asc|desc)\)', markdown_content)
+            if sort_match:
+                markdown_content = self.clean_text(markdown_content, sort_match.group())
+
             # Extraer el TOC entre las etiquetas <!-- TOC INICIO --> y <!-- TOC FIN -->
             toc_match = re.search(r"<!-- TOC INICIO -->(.*?)<!-- TOC FIN -->", markdown_content, re.DOTALL)
             if toc_match:
@@ -58,10 +66,12 @@ class MarkdownConverter:
 
             html = markdown.markdown(markdown_content)
 
+            # Get title from H1
             title = "MD HTML"
             match = re.search(r"<h1.*?>(.*?)</h1>", html, re.DOTALL)
             if match:
                 title = match.group(1)
+
             # Convertir Markdown a HTML
             head_content = f"""
                     <!DOCTYPE html>
@@ -90,7 +100,16 @@ class MarkdownConverter:
         except Exception as e:
             print(f"Error al procesar {input_file}: {e}")
 
-    def convert_toc_markdown_to_html(toc_markdown):
+    def clean_text(self, text, remove_string):
+        # Remove the specific string (e.g., '[//]: <> (order:asc)')
+        text_without_string = re.sub(re.escape(remove_string), '', text)
+
+        # Remove empty lines and leading spaces
+        cleaned_text = '\n'.join(line.strip() for line in text_without_string.split('\n') if line.strip())
+
+        return cleaned_text
+
+    def convert_toc_markdown_to_html(self, toc_markdown):
         """
         Convierte el TOC en formato Markdown a una lista HTML anidada,
         reemplazando los enlaces con la versión .html.
@@ -102,16 +121,20 @@ class MarkdownConverter:
         html_toc = []
         prev_indent = 0
 
+        # TODO : Modificafr el link. ruta_entrada por ruta_salida i extencion .md por .html
         for line in lines:
-            match = re.match(r"(\s*)- \[(.*?)\]\((.*?)\)", line)
+            match = re.match(r"(\s*)- \[(.*?)\]\(([^)#]+)(#.*?)?\)", line)
             if match:
                 indent = len(match.group(1)) // 2  # Cada 2 espacios = 1 nivel de indentación
                 text = match.group(2)
-                link = match.group(3)
+                filename = match.group(3)
+                anchor = match.group(4) if match.group(4) else ""  # Mantener el ancla si existe
 
-                # Convertir .md a .html si el enlace apunta a un archivo Markdown
-                if link.endswith(".md"):
-                    link = link.replace(".md", ".html")
+                # Convertir archivo .md a .html
+                if filename.endswith(".md"):
+                    filename = filename.replace(".md", ".html")
+
+                link = filename + anchor  # Combinar con la ancla si existe
 
                 if indent > prev_indent:
                     html_toc.append("<ul>" * (indent - prev_indent))
