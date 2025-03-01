@@ -45,6 +45,8 @@ class MarkdownTOCGenerator(MarkdownBase):
         """
         elementos = []
         indice_local = 1
+        if not os.path.isdir(self.ruta_base):
+            return False
 
         # Listar los directorios y archivos en la ruta base, ignorando ocultos y los de la lista IGNORAR
         for nombre in sorted(os.listdir(ruta_base)):
@@ -82,8 +84,11 @@ class MarkdownTOCGenerator(MarkdownBase):
         print(f"Ruta base: {self.ruta_base}")
         toc = self.generar_toc_markdown(self.ruta_base, es_raiz=True)
 
-        # Guardar el TOC en el archivo README.md
-        with open(os.path.join(self.ruta_base, 'README.md'), 'w') as archivo_readme:
-            archivo_readme.write("# Tabla de Contenidos\n\n")
-            archivo_readme.write(toc)
-            print("Archivo README.md generado con éxito.")
+        if toc:
+            # Guardar el TOC en el archivo README.md
+            with open(os.path.join(self.ruta_base, 'README.md'), 'w') as archivo_readme:
+                archivo_readme.write("# Tabla de Contenidos\n\n")
+                archivo_readme.write(toc)
+                print("Archivo README.md generado con éxito.")
+        else:
+            print(f"No se pudo generar et TOC porque la ruta {self.ruta_base} no es un directorio.")

@@ -39,7 +39,7 @@ if __name__ == "__main__":
         help="Generar TOC."
     )
     parser.add_argument(
-        "--files",
+        "--toc_files",
         action="store_true",
         help="Generar TOC por cada fichero marckdown que encuentra."
     )
@@ -50,7 +50,7 @@ if __name__ == "__main__":
         help="Lista de directorios a ignorar (separados por espacios)."
     )
     parser.add_argument(
-        "--sort",
+        "--toc_sort",
         action="store_true",
         help="Ordena los ficheros que contienen el regex apropiado."
     )
@@ -82,8 +82,8 @@ if __name__ == "__main__":
     # Obtenemos los parametros para las acciones a realizar
     toc = args.toc
     ignorar = args.ignorar
-    files = args.files
-    sort = args.sort
+    toc_files = args.toc_files
+    toc_sort = args.toc_sort
     html = args.html
 
     # Check if the output directory is not None
@@ -93,19 +93,19 @@ if __name__ == "__main__":
     # Check if the copy param is not None
     if copy is not None:
         copy = set_default_value(copy)
-        make_copy = MarkdownBase(input_dir, copy, ignorar)
+        make_copy = MarkdownBase(input_dir, ruta_destino=copy, ignorar_directorios=ignorar)
         make_copy.set_ruta_destino(copy)
         make_copy.copy()
 
     # If make_copy is not defined or is falsy
     if not make_copy:
         # Create a new MarkdownCopy instance for other copy operation
-        make_other_copy = MarkdownBase(input_dir, output_dir, ignorar)
+        make_other_copy = MarkdownBase(input_dir, ruta_destino=output_dir, ignorar_directorios=ignorar)
         make_other_copy.set_ruta_destino(output_dir)
         make_other_copy.copy()
         input_dir = make_other_copy.get_ruta_destino()
     else:
-        make_other_copy = MarkdownBase(input_dir, output_dir, ignorar)
+        make_other_copy = MarkdownBase(input_dir, ruta_destino=output_dir, ignorar_directorios=ignorar)
         make_other_copy.set_ruta_destino(output_dir)
         # If the path from make_copy does not match output_dir, proceed
         if make_copy.get_ruta_destino() == make_other_copy.get_ruta_destino():
@@ -121,19 +121,15 @@ if __name__ == "__main__":
 
     # Si se quiere realizar un TOC en cada uno de los ficheros .md sobre el contenido interno de estos
     # TODO Recorrer rde forma recursiva en caso de no tener parametre --files
-    if files:
-        updater = MarkdownTOCFiles(input_dir, ignorar)
+    if toc_files or toc_sort:
+        updater = MarkdownTOCFiles(input_dir, toc_files=toc_files, toc_sort=toc_sort, ignorar_directorios=ignorar)
         updater.procesar_archivos_markdown(input_dir)
         print("Archivos Markdown procesados con éxito.")
-
-    # Si solo se quiere ordenar los archivos .md que contiene cabezera que sencuentren dentro de la ruta porporcionada
-    # Intentar abrit archivos lo menos posible
-    if sort and not files:
-        pass
 
     # Si se quiere crear archivos HTML a partir de los .md.
     # TODO tener en cuenta el estilo del HTML y del TOC a demás de modificar el slug para HTML.
     if html is not None:
         html = None if not html else html
-        html_converter = MarkdownConverter(input_dir, input_dir + html)
+        output_html_dir = input_dir + html
+        html_converter = MarkdownConverter(input_dir, output_html_dir=output_html_dir)
         html_converter.process_directory_recursively_with_images()

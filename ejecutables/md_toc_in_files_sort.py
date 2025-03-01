@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import re
-from classes.TOC_files import MarkdownOrdenador
+from markdown.TOC_sort import MarkdownSortFiles
 
 # Lista de archivos a ignorar
 IGNORAR = ['README.md', '.DS_Store', '.gitignore', '.idea', 'books', 'exercices', 'footage', 'planning', 'tools']
@@ -103,11 +103,11 @@ def check_to_sort(ruta_base):
     if match:
         orden = match.group(1)
         # Crear instancia de la clase
-        ordenador = MarkdownOrdenador()
+        ordenador = MarkdownSortFiles()
         # Leer, ordenar y guardar el Markdown
-        markdown = MarkdownOrdenador.leer_markdown(ruta_base)
+        markdown = MarkdownSortFiles.leer_markdown(ruta_base)
         markdown_ordenado = ordenador.ordenar(markdown, ascendente=(orden == 'asc'))
-        MarkdownOrdenador.guardar_markdown(ruta_base, markdown_ordenado)
+        MarkdownSortFiles.guardar_markdown(ruta_base, markdown_ordenado)
         return primera_linea
     return False
 

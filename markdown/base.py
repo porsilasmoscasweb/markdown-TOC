@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import re
 import shutil
 
 
@@ -45,6 +46,10 @@ class MarkdownBase:
     def get_ruta_destino(self):
         return self.ruta_destino
 
+    def get_archivo(self, nombre_archivo):
+        with open(nombre_archivo, 'r', encoding='utf-8') as archivo:
+            return archivo
+
     def leer_markdown(self, nombre_archivo):
         with open(nombre_archivo, 'r', encoding='utf-8') as archivo:
             return archivo.read()
@@ -53,7 +58,23 @@ class MarkdownBase:
         with open(nombre_archivo, 'w', encoding='utf-8') as archivo:
             archivo.write(contenido)
 
+    def get_sort(self, contenido):
+        orden = False
+        primera_linea = contenido.readline().strip()
+        nuevo_contenido = contenido.read().lstrip()
+
+        # Detectar si el archivo contiene la directiva de orden
+        match = re.match(r'\[\/\/\]:\s*<>\s*\(order:(asc|desc)\)', primera_linea)
+        if match:
+            orden = match.group(1)
+
+        return orden, primera_linea, nuevo_contenido
+
     def copy(self):
+        if not os.path.isdir(self.ruta_base):
+            os.makedirs(os.path.dirname(self.ruta_destino), exist_ok=True)
+            return
+
         if not os.path.exists(self.ruta_base):
             shutil.copytree(self.ruta_base, self.ruta_destino, ignore=shutil.ignore_patterns(*self.ignorar))
         else:
@@ -74,3 +95,62 @@ class MarkdownBase:
                     os.makedirs(os.path.dirname(destino_item), exist_ok=True)
                     print(f"{origen_item}: {destino_item}")
                     shutil.copy2(origen_item, destino_item)
+
+    def ordenar(self, markdown, ascendente=True):
+        bloques_pattern = re.compile('|'.join(self.patrones_bloques), re.DOTALL)
+
+        def reemplazar_bloque(match):
+            self.bloques_ignorados.append(match.group(0))
+            return f"__BLOQUE_IGNORADO_{len(self.bloques_ignorados) - 1}__"
+
+        markdown_sin_bloques = bloques_pattern.sub(reemplazar_bloque, markdown)
+
+        pattern = re.compile(r'^(#+\s+.*?)(?=\n#+\s+|\Z)', re.MULTILINE | re.DOTALL)
+        secciones = []
+
+        for match in pattern.finditer(markdown_sin_bloques):
+            encabezado_bloque = match.group(1).strip()
+            nivel = len(re.match(r'^(#+)', encabezado_bloque).group(1))
+            secciones.append({
+                'nivel': nivel,
+                'texto': encabezado_bloque,
+                'hijos': []
+            })
+
+        estructura = []
+        pila = []
+
+        for seccion in secciones:
+            while pila and pila[-1]['nivel'] >= seccion['nivel']:
+                pila.pop()
+
+            if pila:
+                pila[-1]['hijos'].append(seccion)
+            else:
+                estructura.append(seccion)
+
+            pila.append(seccion)
+
+        # Ordenar según el parámetro ascendente o descendente
+        def ordenar_nodos(nodos):
+            nodos.sort(key=lambda x: x['texto'].lower(), reverse=not ascendente)
+            for nodo in nodos:
+                ordenar_nodos(nodo['hijos'])
+
+        ordenar_nodos(estructura)
+
+        def reconstruir_markdown(nodos):
+            resultado = []
+            for nodo in nodos:
+                resultado.append(nodo['texto'])
+                resultado.extend(reconstruir_markdown(nodo['hijos']))
+            return resultado
+
+        markdown_ordenado = '\n\n'.join(reconstruir_markdown(estructura))
+
+        def restaurar_bloques(texto):
+            for i, bloque in enumerate(self.bloques_ignorados):
+                texto = texto.replace(f"__BLOQUE_IGNORADO_{i}__", bloque)
+            return texto
+
+        return restaurar_bloques(markdown_ordenado)

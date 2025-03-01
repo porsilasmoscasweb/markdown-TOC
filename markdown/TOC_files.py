@@ -4,7 +4,7 @@ import re
 from markdown.base import MarkdownBase
 
 class MarkdownTOCFiles(MarkdownBase):
-    def __init__(self, ruta_base, ignorar_directorios=None, sort=False):
+    def __init__(self, ruta_base, toc_files=False, toc_sort=False, ignorar_directorios=None):
         """
         Inicializa la clase con el directorio base y la lista de directorios a ignorar.
         Definir inició i fin del bloque TOC dentro de ficheros
@@ -14,8 +14,8 @@ class MarkdownTOCFiles(MarkdownBase):
         """
         super().__init__(ruta_base, ignorar_directorios=ignorar_directorios)
 
-        self.sort = sort
-
+        self.toc_files = toc_files
+        self.toc_sort = toc_sort
         self.TOC_INICIO = "<!-- TOC INICIO -->"
         self.TOC_FIN = "<!-- TOC FIN -->"
 
@@ -52,9 +52,6 @@ class MarkdownTOCFiles(MarkdownBase):
         dentro_bloque_codigo = False  # Estado para saber si estamos dentro de un bloque de código
 
         with open(ruta_archivo, 'r', encoding='utf-8') as archivo:
-            if self.sort:
-                print(self.sort)
-
             for linea in archivo:
                 # Detectar inicio o fin de un bloque de código con ```
                 if linea.strip().startswith("```"):
@@ -130,3 +127,19 @@ class MarkdownTOCFiles(MarkdownBase):
                         self.actualizar_toc_en_archivo_markdown(ruta_archivo, toc)
         else:
             print(f"La ruta proporcionada no es un archivo .md válido o un directorio: {ruta_base}")
+
+    # def work(self, ruta_base):
+    #     # Obtenemos el contenido del archivo con el que vamos a trabajar
+    #     print(ruta_base)
+    #     with open(ruta_base, "r", encoding="utf-8") as archivo:
+    #         # Comprovamos si el archivo se tiene que ordenar
+    #         orden, sort_line, contenido = self.get_sort(archivo)
+    #         if orden:
+    #             # Ordenamos el contenido del fichero
+    #             contenido = self.ordenar(contenido, ascendente=(orden == 'asc'))
+    #
+    #         # Actualizamos el archivo
+    #         if self.toc_files:
+    #             # Si es un archivo Markdown, procesar solo ese archivo
+    #             toc = self.generar_toc_para_archivo_or_sort(contenido)
+    #             self.actualizar_toc_en_archivo_markdown(ruta_base, toc)

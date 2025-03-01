@@ -4,17 +4,17 @@ import re
 import markdown
 
 class MarkdownConverter:
-    def __init__(self, input_dir, output_dir=None):
+    def __init__(self, input_dir, output_html_dir=None):
         """
         Inicializa la clase con los directorios de entrada y salida.
 
         :param input_dir: Directorio raíz de entrada que contiene los archivos Markdown.
-        :param output_dir: Directorio raíz de salida para guardar los archivos HTML e imágenes.
+        :param output_html_dir: Directorio raíz de salida para guardar los archivos HTML e imágenes.
         """
-        if output_dir is None:
-            output_dir = input_dir + "_html"
+        if output_html_dir is None:
+            output_html_dir = input_dir + "_html"
         self.input_dir = input_dir
-        self.output_dir = output_dir
+        self.output_html_dir = output_html_dir
 
     def convert_markdown_to_html_with_images(self, input_file, output_file):
         """
@@ -52,7 +52,7 @@ class MarkdownConverter:
 
                 # Generar ruta de salida para la imagen
                 relative_image_path = os.path.relpath(image_absolute_path, self.input_dir)
-                output_image_path = os.path.join(self.output_dir, relative_image_path)
+                output_image_path = os.path.join(self.output_html_dir, relative_image_path)
 
                 # Copiar la imagen al directorio de salida si existe
                 if os.path.exists(image_absolute_path):
@@ -160,7 +160,7 @@ class MarkdownConverter:
 
                         # Ruta correspondiente en el directorio de salida
                         relative_path = os.path.relpath(input_file, self.input_dir)
-                        output_file = os.path.join(self.output_dir, relative_path).replace(".md", ".html")
+                        output_file = os.path.join(self.output_html_dir, relative_path).replace(".md", ".html")
 
                         # Convertir Markdown a HTML y manejar imágenes
                         self.convert_markdown_to_html_with_images(input_file, output_file)
