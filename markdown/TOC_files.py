@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import os
 import re
-from Base.base import MarkdownBase
+from markdown.base import MarkdownBase
 
 class MarkdownTOCFiles(MarkdownBase):
-    def __init__(self, ruta_base, ignorar_directorios=None):
+    def __init__(self, ruta_base, ignorar_directorios=None, sort=False):
         """
         Inicializa la clase con el directorio base y la lista de directorios a ignorar.
         Definir inició i fin del bloque TOC dentro de ficheros
@@ -13,6 +13,8 @@ class MarkdownTOCFiles(MarkdownBase):
         :param ignorar_directorios: Lista de directorios a ignorar (opcional).
         """
         super().__init__(ruta_base, ignorar_directorios=ignorar_directorios)
+
+        self.sort = sort
 
         self.TOC_INICIO = "<!-- TOC INICIO -->"
         self.TOC_FIN = "<!-- TOC FIN -->"
@@ -50,6 +52,9 @@ class MarkdownTOCFiles(MarkdownBase):
         dentro_bloque_codigo = False  # Estado para saber si estamos dentro de un bloque de código
 
         with open(ruta_archivo, 'r', encoding='utf-8') as archivo:
+            if self.sort:
+                print(self.sort)
+
             for linea in archivo:
                 # Detectar inicio o fin de un bloque de código con ```
                 if linea.strip().startswith("```"):
@@ -78,8 +83,7 @@ class MarkdownTOCFiles(MarkdownBase):
             toc (str): Contenido del TOC generado.
         """
         nuevo_contenido = ""
-        with open(ruta_archivo, 'r', encoding='utf-8') as archivo:
-            contenido = archivo.read()
+        contenido = self.leer_markdown(ruta_archivo)
 
         # Detectar si el archivo contiene la directiva de orden
         match = re.match(r'\[\/\/\]:\s*<>\s*\(order:(asc|desc)\)', contenido)
@@ -97,9 +101,7 @@ class MarkdownTOCFiles(MarkdownBase):
                 nuevo_contenido += "\n\n"
             nuevo_contenido += self.TOC_INICIO + "\n" + toc + "\n" + self.TOC_FIN + "\n\n" + contenido
 
-        # Escribir el contenido actualizado en el archivo
-        with open(ruta_archivo, 'w', encoding='utf-8') as archivo:
-            archivo.write(nuevo_contenido)
+        self.guardar_markdown(ruta_archivo, nuevo_contenido)
 
     def procesar_archivos_markdown(self, ruta_base):
         """

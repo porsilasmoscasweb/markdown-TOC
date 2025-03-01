@@ -6,10 +6,17 @@ import argparse
 # Agregar el directorio raíz del proyecto al sys.path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from classes.TOC import MarkdownTOCGenerator
-from classes.TOC_files import MarkdownTOCFiles
-from classes.TOC_html import MarkdownConverter
-from classes.TOC_copy import MarkdownCopy
+from markdown.base import MarkdownBase
+from markdown.TOC import MarkdownTOCGenerator
+from markdown.TOC_files import MarkdownTOCFiles
+from markdown.TOC_html import MarkdownConverter
+
+def set_default_value(value):
+    if not value:
+        value = None
+    else:
+        value = value[0]
+    return value
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generar TOC para archivos Markdown.")
@@ -79,35 +86,33 @@ if __name__ == "__main__":
     sort = args.sort
     html = args.html
 
-    # Check if the copy param is not None
-    if copy is not None:
-        if not copy:
-            copy = None
-        else:
-            copy = copy[0]
-        make_copy = MarkdownCopy(input_dir, copy, ignorar)
-        make_copy.copy()
-
     # Check if the output directory is not None
     if output_dir is not None:
-        if not output_dir:
-            output_dir = None
+        output_dir = set_default_value(output_dir)
+
+    # Check if the copy param is not None
+    if copy is not None:
+        copy = set_default_value(copy)
+        make_copy = MarkdownBase(input_dir, copy, ignorar)
+        make_copy.set_ruta_destino(copy)
+        make_copy.copy()
+
+    # If make_copy is not defined or is falsy
+    if not make_copy:
+        # Create a new MarkdownCopy instance for other copy operation
+        make_other_copy = MarkdownBase(input_dir, output_dir, ignorar)
+        make_other_copy.set_ruta_destino(output_dir)
+        make_other_copy.copy()
+        input_dir = make_other_copy.get_ruta_destino()
+    else:
+        make_other_copy = MarkdownBase(input_dir, output_dir, ignorar)
+        make_other_copy.set_ruta_destino(output_dir)
+        # If the path from make_copy does not match output_dir, proceed
+        if make_copy.get_ruta_destino() == make_other_copy.get_ruta_destino():
+            input_dir = make_copy.get_ruta_destino()
         else:
-            output_dir = output_dir[0]
-        # If make_copy is not defined or is falsy
-        if not make_copy:
-            # Create a new MarkdownCopy instance for other copy operation
-            make_other_copy = MarkdownCopy(input_dir, output_dir, ignorar)
             make_other_copy.copy()
-            input_dir = make_other_copy.get_path()
-        else:
-            make_other_copy = MarkdownCopy(input_dir, output_dir, ignorar)
-            # If the path from make_copy does not match output_dir, proceed
-            if make_copy.get_path() == make_other_copy.get_path():
-                input_dir = make_copy.get_path()
-            else:
-                make_other_copy.copy()
-                input_dir = make_other_copy.get_path()
+            input_dir = make_other_copy.get_ruta_destino()
 
     # Generamos el TOC segun el tree del la ruta absoluta proporcionada siendo este un directorio
     if toc:

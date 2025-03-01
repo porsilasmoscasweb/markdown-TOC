@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
-from Base.base import MarkdownBase
+from markdown.base import MarkdownBase
 
 class MarkdownTOCGenerator(MarkdownBase):
     def __init__(self, ruta_base, ignorar_directorios=None):

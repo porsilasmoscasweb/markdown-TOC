@@ -1,6 +1,6 @@
 import re
 
-class MarkdownOrdenador:
+class MarkdownSortSort_files:
     def __init__(self):
         self.patrones_bloques = [
             r'```.*?```',
