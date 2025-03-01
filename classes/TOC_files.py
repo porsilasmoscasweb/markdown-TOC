@@ -1,25 +1,24 @@
+# -*- coding: utf-8 -*-
 import os
 import re
+from Base.base import MarkdownBase
 
-
-class MarkdownTOCUpdater:
+class MarkdownTOCFiles(MarkdownBase):
     def __init__(self, ruta_base, ignorar_directorios=None):
         """
         Inicializa la clase con el directorio base y la lista de directorios a ignorar.
+        Definir inició i fin del bloque TOC dentro de ficheros
 
         :param ruta_base: Ruta base del directorio.
         :param ignorar_directorios: Lista de directorios a ignorar (opcional).
         """
-        if ignorar_directorios is None:
-            ignorar_directorios = []
-        self.ruta_base = ruta_base
-        self.ignorar = ['README.md', '.DS_Store', '.gitignore', '.idea', 'books', 'exercices', 'footage', 'planning', 'tools'] + ignorar_directorios
+        super().__init__(ruta_base, ignorar_directorios=ignorar_directorios)
+
         self.TOC_INICIO = "<!-- TOC INICIO -->"
         self.TOC_FIN = "<!-- TOC FIN -->"
 
     def es_archivo_ignorado(self, nombre):
-        """Función para ignorar archivos ocultos o que están en la lista de ignorados."""
-        return nombre.startswith('.') or nombre in self.ignorar
+        return super().es_archivo_ignorado(nombre)
 
     def es_parte_de_ruta_ignorada(self, nombre):
         """Función para ignorar directorios que están en la lista de ignorados."""
@@ -117,10 +116,12 @@ class MarkdownTOCUpdater:
         elif os.path.isdir(ruta_base):
             # Si es un directorio, procesar todos los archivos Markdown en el directorio
             for directorio_actual, subdirectorios, archivos in os.walk(ruta_base):
+                # Omitir directorios
                 if self.es_parte_de_ruta_ignorada(directorio_actual):
                     continue
 
                 for archivo in archivos:
+                    # Generar TOC para archivos markdown si no estan en la lista de ignorados
                     if archivo.endswith('.md') and not self.es_archivo_ignorado(archivo):
                         ruta_archivo = os.path.join(directorio_actual, archivo)
                         toc = self.generar_toc_para_archivo(ruta_archivo)

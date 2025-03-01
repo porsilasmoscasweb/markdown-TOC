@@ -1,24 +1,13 @@
 # -*- coding: utf-8 -*-
 import os
+from Base.base import MarkdownBase
 
-class MarkdownTOCGenerator:
+class MarkdownTOCGenerator(MarkdownBase):
     def __init__(self, ruta_base, ignorar_directorios=None):
-        """
-        Inicializa la clase con el directorio base y la lista de directorios a ignorar.
-
-        :param ruta_base: Ruta base del directorio.
-        :param ignorar_directorios: Lista de directorios a ignorar (opcional).
-        """
-        if ignorar_directorios is None:
-            ignorar_directorios = []
-        self.ruta_base = ruta_base
-        self.ignorar = ['README.md', '.DS_Store', '.gitignore', '.idea', 'footage', 'planning'] + ignorar_directorios
-        # print(f"Ignorar configurado con: {self.ignorar}")
+        super().__init__(ruta_base, ignorar_directorios=ignorar_directorios)
 
     def es_archivo_ignorado(self, nombre):
-        """Función para ignorar archivos ocultos o que están en la lista de ignorados."""
-        # print(f"Verificando: {nombre}, Ignorar: {self.ignorar}")
-        return nombre.startswith('.') or nombre in self.ignorar
+        return super().es_archivo_ignorado(nombre)
 
     def formatear_nombre(self, nombre, es_directorio=False):
         """
@@ -35,7 +24,9 @@ class MarkdownTOCGenerator:
             return nombre.upper()
         else:
             nombre_sin_ext, _ = os.path.splitext(nombre)
-            nombre_sin_ext = nombre_sin_ext.replace('_', ' ')
+            if nombre_sin_ext.startswith('_'):
+                return nombre_sin_ext
+            nombre_sin_ext = nombre_sin_ext.replace('_', ' ').strip()
             return nombre_sin_ext.capitalize()
 
     def generar_toc_markdown(self, ruta_base, nivel=0, indice_padre="", es_raiz=False):
@@ -88,6 +79,7 @@ class MarkdownTOCGenerator:
         """
         Crea el archivo README.md con el contenido del TOC generado.
         """
+        print(f"Ruta base: {self.ruta_base}")
         toc = self.generar_toc_markdown(self.ruta_base, es_raiz=True)
 
         # Guardar el TOC en el archivo README.md

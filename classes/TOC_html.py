@@ -4,19 +4,17 @@ import re
 import markdown
 
 class MarkdownConverter:
-    def __init__(self, input_dir, output_dir):
+    def __init__(self, input_dir, output_dir=None):
         """
         Inicializa la clase con los directorios de entrada y salida.
 
         :param input_dir: Directorio raíz de entrada que contiene los archivos Markdown.
         :param output_dir: Directorio raíz de salida para guardar los archivos HTML e imágenes.
         """
+        if output_dir is None:
+            output_dir = input_dir + "_html"
         self.input_dir = input_dir
         self.output_dir = output_dir
-
-    import re
-
-
 
     def convert_markdown_to_html_with_images(self, input_file, output_file):
         """
