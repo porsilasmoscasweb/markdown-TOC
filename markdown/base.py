@@ -12,14 +12,23 @@ class MarkdownBase:
         :param ruta_base: Ruta base del directorio.
         :param ignorar_directorios: Lista de directorios a ignorar (opcional).
         """
+        self.ruta_base = ruta_base
+
+        # Ignorar
+        self.ignorar = ['README.md', '.DS_Store', '.gitignore', '.idea', 'books', 'exercices', 'footage', 'tools',
+                        'planning', '*.log']
         if ignorar_directorios is None:
             ignorar_directorios = []
-        if ruta_destino is None:
-            ruta_destino = ruta_base
-        self.ruta_base = ruta_base
-        self.ruta_destino = ruta_destino
-        self.ignorar = ['README.md', '.DS_Store', '.gitignore', '.idea', 'books', 'exercices', 'footage', 'tools', 'planning', '*.log']
         self.ignorar += ignorar_directorios
+
+        # Ruta destino y crear directorio destino si es diferente de ruta_base
+        if ruta_destino and ruta_destino != ruta_base:
+            self.ruta_destino = ruta_destino
+            self.copy()
+        else:
+            self.ruta_destino = ruta_base
+
+        # Patrones
         self.patrones_bloques = [
             r'```.*?```',
             r"'''.*?'''",
@@ -30,6 +39,10 @@ class MarkdownBase:
         ]
         self.bloques_ignorados = []
 
+        print(f"Ruta base: {self.ruta_base}")
+        print(f"Ruta destino: {self.ruta_destino}")
+        print(f"Ignoramos: {self.ignorar}")
+
     def es_archivo_ignorado(self, nombre):
         """Función para ignorar archivos ocultos o que están en la lista de ignorados."""
         return nombre.startswith('.') or nombre in self.ignorar
@@ -39,6 +52,7 @@ class MarkdownBase:
             self.ruta_destino = self.ruta_base + '_copy'
         else:
             self.ruta_destino = ruta_destino
+        print(f"Ruta destino seteada a: {self.ruta_destino}")
 
     def get_ruta_base(self):
         return self.ruta_base
@@ -46,9 +60,9 @@ class MarkdownBase:
     def get_ruta_destino(self):
         return self.ruta_destino
 
-    def get_archivo(self, nombre_archivo):
-        with open(nombre_archivo, 'r', encoding='utf-8') as archivo:
-            return archivo
+    # def get_archivo(self, nombre_archivo):
+    #     with open(nombre_archivo, 'r', encoding='utf-8') as archivo:
+    #         return archivo
 
     def leer_markdown(self, nombre_archivo):
         with open(nombre_archivo, 'r', encoding='utf-8') as archivo:
@@ -84,6 +98,7 @@ class MarkdownBase:
 
                 if os.path.isdir(origen_item):
                     if item in self.ignorar:
+                        print(f"[Ignorado]: {item}")
                         continue  # Ignorar directorio
                     shutil.copytree(origen_item, destino_item, dirs_exist_ok=True,
                                     ignore=shutil.ignore_patterns(*self.ignorar))
@@ -93,7 +108,6 @@ class MarkdownBase:
 
                     # Ensure destination folder exists
                     os.makedirs(os.path.dirname(destino_item), exist_ok=True)
-                    print(f"{origen_item}: {destino_item}")
                     shutil.copy2(origen_item, destino_item)
 
     def ordenar(self, markdown, ascendente=True):

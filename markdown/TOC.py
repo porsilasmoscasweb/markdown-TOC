@@ -3,8 +3,8 @@ import os
 from markdown.base import MarkdownBase
 
 class MarkdownTOCGenerator(MarkdownBase):
-    def __init__(self, ruta_base, ignorar_directorios=None):
-        super().__init__(ruta_base, ignorar_directorios=ignorar_directorios)
+    def __init__(self, ruta_base, ruta_destino=None, ignorar_directorios=None):
+        super().__init__(ruta_base, ruta_destino=ruta_destino, ignorar_directorios=ignorar_directorios)
 
     def es_archivo_ignorado(self, nombre):
         return super().es_archivo_ignorado(nombre)
@@ -45,7 +45,7 @@ class MarkdownTOCGenerator(MarkdownBase):
         """
         elementos = []
         indice_local = 1
-        if not os.path.isdir(self.ruta_base):
+        if not os.path.isdir(ruta_base):
             return False
 
         # Listar los directorios y archivos en la ruta base, ignorando ocultos y los de la lista IGNORAR
@@ -81,14 +81,14 @@ class MarkdownTOCGenerator(MarkdownBase):
         """
         Crea el archivo README.md con el contenido del TOC generado.
         """
-        print(f"Ruta base: {self.ruta_base}")
-        toc = self.generar_toc_markdown(self.ruta_base, es_raiz=True)
+        print(f"Ruta base: {self.ruta_destino}")
+        toc = self.generar_toc_markdown(self.ruta_destino, es_raiz=True)
 
         if toc:
             # Guardar el TOC en el archivo README.md
-            with open(os.path.join(self.ruta_base, 'README.md'), 'w') as archivo_readme:
+            with open(os.path.join(self.ruta_destino, 'README.md'), 'w') as archivo_readme:
                 archivo_readme.write("# Tabla de Contenidos\n\n")
                 archivo_readme.write(toc)
                 print("Archivo README.md generado con éxito.")
         else:
-            print(f"No se pudo generar et TOC porque la ruta {self.ruta_base} no es un directorio.")
+            print(f"No se pudo generar et TOC porque la ruta {self.ruta_destino} no es un directorio.")
