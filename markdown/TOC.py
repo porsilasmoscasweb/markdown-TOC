@@ -3,13 +3,20 @@ import os
 from markdown.base import MarkdownBase
 
 class MarkdownTOCGenerator(MarkdownBase):
-    def __init__(self, ruta_base, ruta_destino=None, ignorar_directorios=None):
-        super().__init__(ruta_base, ruta_destino=ruta_destino, ignorar_directorios=ignorar_directorios)
+    def __init__(self,
+                 ruta_base,
+                 ruta_destino=None,
+                 ignorar_directorios=None):
+        super().__init__(ruta_base,
+                         ruta_destino=ruta_destino,
+                         ignorar_directorios=ignorar_directorios)
 
     def es_archivo_ignorado(self, nombre):
         return super().es_archivo_ignorado(nombre)
 
-    def formatear_nombre(self, nombre, es_directorio=False):
+    def formatear_nombre(self,
+                         nombre,
+                         es_directorio=False):
         """
         Formatea el nombre del archivo o directorio.
 
@@ -29,7 +36,11 @@ class MarkdownTOCGenerator(MarkdownBase):
             nombre_sin_ext = nombre_sin_ext.replace('_', ' ').strip()
             return nombre_sin_ext.capitalize()
 
-    def generar_toc_markdown(self, ruta_base, nivel=0, indice_padre="", es_raiz=False):
+    def generar_toc_markdown(self,
+                             ruta_base,
+                             nivel=0,
+                             indice_padre="",
+                             es_raiz=False):
         """
         Genera una tabla de contenidos en markdown basado en la estructura
         de directorios y subdirectorios.

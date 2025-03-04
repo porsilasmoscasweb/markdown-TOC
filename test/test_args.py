@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
-import pytest
-import sys
+import platform
 import os
 import shutil
 import subprocess
 
-INPUT_DIR = "/home/egarriga/Documents/markdown-TOC/memento"
-INPUT_FILE = "/home/egarriga/Documents/markdown-TOC/memento/wiki.md"
+PATH_MAC = "/Users/egarriga/Git"
+PATH_LINUX = "/home/egarriga/Documents"
+
+INPUT_DIR = PATH_MAC + "/markdown-TOC/memento"
+INPUT_FILE = PATH_MAC + "/markdown-TOC/memento/wiki.md"
 
 def rmtree(dir):
     try:
@@ -122,7 +124,6 @@ def test_toc_file_output():
                 assert True
     rmtree(output_dir_files)
 
-
 def test_toc_file_output_default():
     """Ejecuta el script con --toc_files. Debe de recorrer todos los ficheros '.md' y generar el TOC dentro de cada uno de ellos, si ya existe lo sobre escribe."""
     output_dir_files = INPUT_DIR + "_output"
@@ -135,6 +136,19 @@ def test_toc_file_output_default():
                 assert True
     rmtree(output_dir_files)
 
+def test_rm_toc_file_from_file():
+    """Ejecuta el script con --rm_toc_files. Debe de recorrer todos los ficheros '.md' y eleminar el TOC dentro de cada uno de ellos."""
+    with open(INPUT_DIR + "/wiki.md") as archivo:
+        for line in archivo:
+            if line == '<!-- TOC INICIO -->':
+                assert True
+    subprocess.run(["python3", "generar_TOC.py", INPUT_DIR, "--rm_toc_files"], capture_output=True, text=True)
+    assert not os.path.isfile(INPUT_DIR + "/README.md")
+    with open(INPUT_DIR + "/wiki.md") as archivo:
+        for line in archivo:
+            if line == '<!-- TOC INICIO -->':
+                assert False
+
 def test_toc_file():
     """Ejecuta el script con --toc_files. Debe de recorrer todos los ficheros '.md' y generar el TOC dentro de cada uno de ellos, si ya existe lo sobre escribe."""
     subprocess.run(["python3", "generar_TOC.py", INPUT_DIR, "--toc_files"], capture_output=True, text=True)
@@ -143,3 +157,38 @@ def test_toc_file():
         for line in archivo:
             if line == '<!-- TOC INICIO -->':
                 assert True
+
+def test_rm_toc_file_output_dir():
+    """Ejecuta el script con --rm_toc_files. Debe de recorrer todos los ficheros '.md' y eleminar el TOC dentro de cada uno de ellos."""
+    output_dir = INPUT_DIR + "_output"
+    assert not os.path.isfile(output_dir + "/README.md")
+    with open(INPUT_DIR + "/wiki.md") as archivo:
+        for line in archivo:
+            if line == '<!-- TOC INICIO -->':
+                assert True
+    subprocess.run(["python3", "generar_TOC.py", INPUT_DIR, "-rtf", "--output"], capture_output=True,
+                   text=True)
+    assert not os.path.isfile(output_dir + "/README.md")
+    with open(output_dir + "/wiki.md") as archivo:
+        for line in archivo:
+            if line == '<!-- TOC INICIO -->':
+                assert False
+    with open(INPUT_DIR + "/wiki.md") as archivo:
+        for line in archivo:
+            if line == '<!-- TOC INICIO -->':
+                assert True
+    rmtree(output_dir)
+
+def test_rm_toc_file_output_dir_file():
+    """Ejecuta el script con --rm_toc_files. Debe de recorrer todos los ficheros '.md' y eleminar el TOC dentro de cada uno de ellos."""
+    subprocess.run(["python3", "generar_TOC.py", INPUT_DIR, "-c"], capture_output=True, text=True)
+    with open(INPUT_DIR + "_copy/wiki.md") as archivo:
+        for line in archivo:
+            if line == '<!-- TOC INICIO -->':
+                assert True
+    subprocess.run(["python3", "generar_TOC.py", INPUT_DIR + "_copy/wiki.md", "-rtf"], capture_output=True, text=True)
+    with open(INPUT_DIR + "_copy/wiki.md") as archivo:
+        for line in archivo:
+            if line == '<!-- TOC INICIO -->':
+                assert False
+    rmtree(INPUT_DIR + "_copy")

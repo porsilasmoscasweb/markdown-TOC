@@ -42,6 +42,12 @@ if __name__ == "__main__":
         help="Generar TOC por cada fichero markdown que encuentra dentro de la ruta de entrada."
     )
     parser.add_argument(
+        "-rtf",
+        "--rm_toc_files",
+        action="store_true",
+        help="Elimina TOC por cada fichero markdown que encuentra dentro de la ruta de entrada."
+    )
+    parser.add_argument(
         "-ts",
         "--toc_sort",
         action="store_true",
@@ -94,29 +100,53 @@ if __name__ == "__main__":
     input_dir = args.input_dir
 
     # Set los posibles argumentos que pueden no estar, estar vacios o llegar con un parametro (List) obteniendo su primer valor
-    copy = set_default_value(args.copy, ruta_base=input_dir, default='_copy')
-    output_dir = set_default_value(args.output_dir, ruta_base=input_dir, default='_output')
-    html = set_default_value(args.html, ruta_base=input_dir, default='_html')
+    copy = set_default_value(args.copy,
+                             ruta_base=input_dir,
+                             default='_copy')
+    output_dir = set_default_value(args.output_dir,
+                                   ruta_base=input_dir,
+                                   default='_output')
+    html = set_default_value(args.html,
+                             ruta_base=input_dir,
+                             default='_html')
 
     # Obtenemos los parametros para las acciones a realizar. Campos boleanos
     toc = args.toc # Directorios o archivos a ignorar
     ignorar = args.ignorar # Directorios o archivos a ignorar
     toc_files = args.toc_files # Genera el TOC en cada archivo .md
+    rm_toc_files = args.rm_toc_files # Eleminar el TOC en cada archivo .md
     toc_sort = args.toc_sort # Ordena el contenido del los archivos .md con cabecera `...(order:asc|desc)...`
 
     # Make copy.
     if copy:
-        make_copy = MarkdownBase(input_dir, ruta_destino=copy, ignorar_directorios=ignorar)
+        make_copy = MarkdownBase(input_dir,
+                                 ruta_destino=copy,
+                                 ignorar_directorios=ignorar)
 
     # Generamos el TOC sobre la ruta base o sobre la ruta output si este parametro se ha proporcionado.
     if toc:
-        generador = MarkdownTOCGenerator(input_dir, output_dir, ignorar)
+        generador = MarkdownTOCGenerator(input_dir,
+                                         ruta_destino=output_dir,
+                                         ignorar_directorios=ignorar)
         generador.crear_readme_toc()
 
-    # Si se quiere realizar un TOC en cada uno de los ficheros .md sobre el contenido interno de estos
+    # Si se quiere realizar un TOC en cada uno de los ficheros .md
     if toc_files:
-        updater = MarkdownTOCFiles(input_dir, ruta_destino=output_dir, toc_files=toc_files, toc_sort=toc_sort, ignorar_directorios=ignorar)
-        updater.procesar_archivos_markdown(input_dir)
+        updater = MarkdownTOCFiles(input_dir,
+                                   ruta_destino=output_dir,
+                                   toc_files=toc_files,
+                                   toc_sort=toc_sort,
+                                   ignorar_directorios=ignorar)
+        updater.procesar_archivos_markdown()
+
+    # Si se quiere eliminar el TOC en cada uno de los ficheros .md
+    if rm_toc_files:
+        updater = MarkdownTOCFiles(input_dir,
+                                   ruta_destino=output_dir,
+                                   rm_toc_files=rm_toc_files,
+                                   toc_sort=toc_sort,
+                                   ignorar_directorios=ignorar)
+        updater.procesar_archivos_markdown()
 
     # # Si se quiere crear archivos HTML a partir de los .md.
     # # TODO tener en cuenta el estilo del HTML y del TOC a demás de modificar el slug para HTML.

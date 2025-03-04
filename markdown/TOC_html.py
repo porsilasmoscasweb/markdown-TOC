@@ -4,7 +4,9 @@ import re
 import markdown
 
 class MarkdownConverter:
-    def __init__(self, input_dir, output_html_dir=None):
+    def __init__(self,
+                 input_dir,
+                 output_html_dir=None):
         """
         Inicializa la clase con los directorios de entrada y salida.
 
@@ -16,7 +18,9 @@ class MarkdownConverter:
         self.input_dir = input_dir
         self.output_html_dir = output_html_dir
 
-    def convert_markdown_to_html_with_images(self, input_file, output_file):
+    def convert_markdown_to_html_with_images(self,
+                                             input_file,
+                                             output_file):
         """
         Convierte un archivo Markdown a HTML y copia imágenes referenciadas.
 
@@ -98,7 +102,9 @@ class MarkdownConverter:
         except Exception as e:
             print(f"Error al procesar {input_file}: {e}")
 
-    def clean_text(self, text, remove_string):
+    def clean_text(self,
+                   text,
+                   remove_string):
         # Remove the specific string (e.g., '[//]: <> (order:asc)')
         text_without_string = re.sub(re.escape(remove_string), '', text)
 

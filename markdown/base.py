@@ -5,7 +5,10 @@ import shutil
 
 
 class MarkdownBase:
-    def __init__(self, ruta_base, ruta_destino=None, ignorar_directorios=None):
+    def __init__(self,
+                 ruta_base,
+                 ruta_destino=None,
+                 ignorar_directorios=None):
         """
         Inicializa la clase con el directorio base y la lista de directorios a ignorar.
 
@@ -15,8 +18,16 @@ class MarkdownBase:
         self.ruta_base = ruta_base
 
         # Ignorar
-        self.ignorar = ['README.md', '.DS_Store', '.gitignore', '.idea', 'books', 'exercices', 'footage', 'tools',
-                        'planning', '*.log']
+        self.ignorar = ['README.md',
+                        '.DS_Store',
+                        '.gitignore',
+                        '.idea',
+                        'books',
+                        'exercices',
+                        'footage',
+                        'tools',
+                        'planning',
+                        '*.log']
         if ignorar_directorios is None:
             ignorar_directorios = []
         self.ignorar += ignorar_directorios
@@ -51,7 +62,9 @@ class MarkdownBase:
         with open(nombre_archivo, 'r', encoding='utf-8') as archivo:
             return archivo.read()
 
-    def guardar_markdown(self, nombre_archivo, contenido):
+    def guardar_markdown(self,
+                         nombre_archivo,
+                         contenido):
         with open(nombre_archivo, 'w', encoding='utf-8') as archivo:
             archivo.write(contenido)
 
@@ -93,7 +106,9 @@ class MarkdownBase:
                     os.makedirs(os.path.dirname(destino_item), exist_ok=True)
                     shutil.copy2(origen_item, destino_item)
 
-    def ordenar(self, markdown, ascendente=True):
+    def ordenar(self,
+                markdown,
+                ascendente=True):
         bloques_pattern = re.compile('|'.join(self.patrones_bloques), re.DOTALL)
 
         def reemplazar_bloque(match):

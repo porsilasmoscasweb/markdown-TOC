@@ -12,7 +12,9 @@ class MarkdownSortFiles:
         ]
         self.bloques_ignorados = []
 
-    def ordenar(self, markdown, ascendente=True):
+    def ordenar(self,
+                markdown,
+                ascendente=True):
         bloques_pattern = re.compile('|'.join(self.patrones_bloques), re.DOTALL)
 
         def reemplazar_bloque(match):
