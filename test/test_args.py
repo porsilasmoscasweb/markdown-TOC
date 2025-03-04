@@ -52,12 +52,13 @@ def test_copy_file():
 def test_toc():
     """Ejecuta el script sin argumentos y verifica la salida."""
     result = subprocess.run(["python3", "generar_TOC.py", INPUT_DIR, "--toc"], capture_output=True, text=True)
-    assert f"Archivo README.md generado con éxito en la ruta {INPUT_DIR}." in result.stdout
+    assert os.path.isfile(INPUT_DIR + "/README.md")
     rmfile(INPUT_DIR+"/README.md")
 
-def test_toc_file():
+def test_toc_path_file():
     """Ejecuta el script con --arg y verifica la salida."""
     result = subprocess.run(["python3", "generar_TOC.py", INPUT_FILE, "--toc"], capture_output=True, text=True)
+    assert not os.path.isfile(INPUT_DIR + "/README.md")
     assert "error" in result.stderr.lower()
 
 def test_toc_output():
@@ -65,6 +66,9 @@ def test_toc_output():
     output_dir = "/tmp/test_output_dir"
     result = subprocess.run(["python3", "generar_TOC.py", INPUT_DIR, "--toc", "--output_dir", output_dir], capture_output=True, text=True)
     assert f"Archivo README.md generado con éxito en la ruta {output_dir}." in result.stdout
+    assert os.path.isfile(output_dir + "/README.md")
+    assert os.path.isdir(output_dir + "/guies")
+    assert not os.path.isdir(output_dir + "/planning")
     rmtree(output_dir)
 
 def test_toc_output_default():
@@ -72,12 +76,16 @@ def test_toc_output_default():
     output_dir = INPUT_DIR + "_output"
     result = subprocess.run(["python3", "generar_TOC.py", INPUT_DIR, "--toc", "--output_dir"], capture_output=True, text=True)
     assert f"Archivo README.md generado con éxito en la ruta {output_dir}." in result.stdout
+    assert os.path.isfile(output_dir + "/README.md")
+    assert os.path.isdir(output_dir + "/guies")
+    assert not os.path.isdir(output_dir + "/planning")
     rmtree(output_dir)
 
 def test_toc_output_ignorar():
     """Ejecuta el script sin argumentos y verifica la salida."""
     output_dir = "/tmp/test_output_dir"
     subprocess.run(["python3", "generar_TOC.py", INPUT_DIR, "--toc", "--output_dir", output_dir, "--ignorar", "guies"], capture_output=True, text=True)
+    assert os.path.isfile(output_dir + "/README.md")
     assert not os.path.isdir(output_dir+"/guies")
     rmtree(output_dir)
 
@@ -85,6 +93,23 @@ def test_toc_output_ignorar_lista():
     """Ejecuta el script sin argumentos y verifica la salida."""
     output_dir = "/tmp/test_output_dir"
     subprocess.run(["python3", "generar_TOC.py", INPUT_DIR, "--toc", "--output_dir", output_dir, "--ignorar"] + ["guies", "wiki.md"], capture_output=True, text=True)
+    assert os.path.isfile(output_dir+"/README.md")
     assert not os.path.isdir(output_dir+"/guies")
     assert not os.path.isfile(output_dir+"/wiki.md")
     rmtree(output_dir)
+
+# def test_toc_path_file():
+#     """Ejecuta el script con --arg y verifica la salida."""
+#     result = subprocess.run(["python3", "generar_TOC.py", INPUT_DIR, "--toc_files"], capture_output=True, text=True)
+#     assert "error" in result.stderr.lower()
+#
+# def test_toc_path_file_output():
+#     output_files = "/tmp/test_output_files"
+#     """Ejecuta el script con --arg y verifica la salida."""
+#     result = subprocess.run(["python3", "generar_TOC.py", INPUT_DIR, "--toc_files", "--output_dir", output_files], capture_output=True, text=True)
+#     assert "error" in result.stderr.lower()
+#
+# def test_toc_path_file_output_default():
+#     """Ejecuta el script con --arg y verifica la salida."""
+#     result = subprocess.run(["python3", "generar_TOC.py", INPUT_DIR, "--toc_files", "--output_dir"], capture_output=True, text=True)
+#     assert "error" in result.stderr.lower()

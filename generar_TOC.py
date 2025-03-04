@@ -101,7 +101,6 @@ if __name__ == "__main__":
     # Obtenemos los parametros para las acciones a realizar. Campos boleanos
     toc = args.toc # Directorios o archivos a ignorar
     ignorar = args.ignorar # Directorios o archivos a ignorar
-    print(ignorar)
     toc_files = args.toc_files # Genera el TOC en cada archivo .md
     toc_sort = args.toc_sort # Ordena el contenido del los archivos .md con cabecera `...(order:asc|desc)...`
 
