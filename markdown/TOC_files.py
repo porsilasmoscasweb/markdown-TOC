@@ -4,7 +4,7 @@ import re
 from markdown.base import MarkdownBase
 
 class MarkdownTOCFiles(MarkdownBase):
-    def __init__(self, ruta_base, toc_files=False, toc_sort=False, ignorar_directorios=None):
+    def __init__(self, ruta_base, ruta_destino=None, toc_files=False, toc_sort=False, ignorar_directorios=None):
         """
         Inicializa la clase con el directorio base y la lista de directorios a ignorar.
         Definir inició i fin del bloque TOC dentro de ficheros
@@ -12,7 +12,7 @@ class MarkdownTOCFiles(MarkdownBase):
         :param ruta_base: Ruta base del directorio.
         :param ignorar_directorios: Lista de directorios a ignorar (opcional).
         """
-        super().__init__(ruta_base, ignorar_directorios=ignorar_directorios)
+        super().__init__(ruta_base, ruta_destino=ruta_destino, ignorar_directorios=ignorar_directorios)
 
         self.toc_files = toc_files
         self.toc_sort = toc_sort
@@ -100,7 +100,7 @@ class MarkdownTOCFiles(MarkdownBase):
 
         self.guardar_markdown(ruta_archivo, nuevo_contenido)
 
-    def procesar_archivos_markdown(self, ruta_base):
+    def procesar_archivos_markdown(self, ruta_base=None):
         """
         Procesa todos los archivos Markdown en el directorio, añadiendo o
         sustituyendo el TOC en cada uno de ellos.
@@ -108,6 +108,9 @@ class MarkdownTOCFiles(MarkdownBase):
         Args:
             ruta_base (str): Ruta base del directorio o archivo Markdown.
         """
+        if ruta_base is None:
+            ruta_base = self.ruta_base
+
         if os.path.isfile(ruta_base) and ruta_base.endswith('.md'):
             # Si es un archivo Markdown, procesar solo ese archivo
             toc = self.generar_toc_para_archivo(ruta_base)

@@ -1,3 +1,10 @@
+<!-- TOC INICIO -->
+- [MDDEL DE DADES](#mddel-de-dades)
+  - [SEARCH EN CAMP FUNCIÓ](#search-en-camp-funció)
+    - [Atributs](#atributs)
+  - [DEBUG](#debug)
+<!-- TOC FIN -->
+
 # MDDEL DE DADES
 
 ## SEARCH EN CAMP FUNCIÓ

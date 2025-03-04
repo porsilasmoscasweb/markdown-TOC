@@ -1,3 +1,11 @@
+<!-- TOC INICIO -->
+- [CAMP RELACIÓ](#camp-relació)
+  - [ADJUDICAR A _ONE2MANY_ I _MANY2MANY_](#adjudicar-a-_one2many_-i-_many2many_)
+  - [EXEMPLE (obtenir totes les tasques d'un equip segons id d'usuari)](#exemple-obtenir-totes-les-tasques-dun-equip-segons-id-dusuari)
+      - [Atributs](#atributs)
+  - [EXEMPLE (one2many com a camp funció)](#exemple-one2many-com-a-camp-funció)
+<!-- TOC FIN -->
+
 # CAMP RELACIÓ
 
 > **NOTA**

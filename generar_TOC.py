@@ -95,7 +95,7 @@ if __name__ == "__main__":
 
     # Set los posibles argumentos que pueden no estar, estar vacios o llegar con un parametro (List) obteniendo su primer valor
     copy = set_default_value(args.copy, ruta_base=input_dir, default='_copy')
-    output_dir = set_default_value(args.output_dir,ruta_base=input_dir, default='_output')
+    output_dir = set_default_value(args.output_dir, ruta_base=input_dir, default='_output')
     html = set_default_value(args.html, ruta_base=input_dir, default='_html')
 
     # Obtenemos los parametros para las acciones a realizar. Campos boleanos
@@ -114,9 +114,9 @@ if __name__ == "__main__":
         generador.crear_readme_toc()
 
     # Si se quiere realizar un TOC en cada uno de los ficheros .md sobre el contenido interno de estos
-    # if toc_files:
-    #     updater = MarkdownTOCFiles(input_dir, toc_files=toc_files, toc_sort=toc_sort, ignorar_directorios=ignorar)
-    #     updater.procesar_archivos_markdown(input_dir)
+    if toc_files:
+        updater = MarkdownTOCFiles(input_dir, ruta_destino=output_dir, toc_files=toc_files, toc_sort=toc_sort, ignorar_directorios=ignorar)
+        updater.procesar_archivos_markdown(input_dir)
 
     # # Si se quiere crear archivos HTML a partir de los .md.
     # # TODO tener en cuenta el estilo del HTML y del TOC a demás de modificar el slug para HTML.
