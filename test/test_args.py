@@ -6,6 +6,7 @@ import shutil
 import subprocess
 
 INPUT_DIR = "/home/egarriga/Documents/markdown-TOC/memento"
+INPUT_FILE = "/home/egarriga/Documents/markdown-TOC/memento/wiki.md"
 
 def rmtree(dir):
     try:
@@ -43,11 +44,21 @@ def test_copy_default():
     assert dir in result.stdout  # argparse mostrará un mensaje de error
     rmtree(dir)
 
+def test_copy_file():
+    """Ejecuta el script con --copy pero sin valor, esperando un error."""
+    result = subprocess.run(["python3", "generar_TOC.py", INPUT_FILE, "--copy"], capture_output=True, text=True)
+    assert "error" in result.stderr.lower()  # argparse mostrará un mensaje de error
+
 def test_toc():
     """Ejecuta el script sin argumentos y verifica la salida."""
     result = subprocess.run(["python3", "generar_TOC.py", INPUT_DIR, "--toc"], capture_output=True, text=True)
     assert f"Archivo README.md generado con éxito en la ruta {INPUT_DIR}." in result.stdout
     rmfile(INPUT_DIR+"/README.md")
+
+def test_toc_file():
+    """Ejecuta el script con --arg y verifica la salida."""
+    result = subprocess.run(["python3", "generar_TOC.py", INPUT_FILE, "--toc"], capture_output=True, text=True)
+    assert "error" in result.stderr.lower()
 
 def test_toc_output():
     """Ejecuta el script sin argumentos y verifica la salida."""
@@ -63,9 +74,17 @@ def test_toc_output_default():
     assert f"Archivo README.md generado con éxito en la ruta {output_dir}." in result.stdout
     rmtree(output_dir)
 
-# def test_toc_output_ignorar():
-#     """Ejecuta el script sin argumentos y verifica la salida."""
-#     output_dir = "/tmp/test_output_dir"
-#     result = subprocess.run(["python3", "generar_TOC.py", INPUT_DIR, "--toc", "--output_dir", output_dir, "--ignorar", "guies wiki.md"], capture_output=True, text=True)
-#     assert f"Archivo README.md generado con éxito en la ruta {output_dir}." in result.stdout
-#     rmtree(output_dir)
+def test_toc_output_ignorar():
+    """Ejecuta el script sin argumentos y verifica la salida."""
+    output_dir = "/tmp/test_output_dir"
+    subprocess.run(["python3", "generar_TOC.py", INPUT_DIR, "--toc", "--output_dir", output_dir, "--ignorar", "guies"], capture_output=True, text=True)
+    assert not os.path.isdir(output_dir+"/guies")
+    rmtree(output_dir)
+
+def test_toc_output_ignorar_lista():
+    """Ejecuta el script sin argumentos y verifica la salida."""
+    output_dir = "/tmp/test_output_dir"
+    subprocess.run(["python3", "generar_TOC.py", INPUT_DIR, "--toc", "--output_dir", output_dir, "--ignorar"] + ["guies", "wiki.md"], capture_output=True, text=True)
+    assert not os.path.isdir(output_dir+"/guies")
+    assert not os.path.isfile(output_dir+"/wiki.md")
+    rmtree(output_dir)

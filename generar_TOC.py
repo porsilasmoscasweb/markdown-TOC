@@ -101,13 +101,13 @@ if __name__ == "__main__":
     # Obtenemos los parametros para las acciones a realizar. Campos boleanos
     toc = args.toc # Directorios o archivos a ignorar
     ignorar = args.ignorar # Directorios o archivos a ignorar
+    print(ignorar)
     toc_files = args.toc_files # Genera el TOC en cada archivo .md
     toc_sort = args.toc_sort # Ordena el contenido del los archivos .md con cabecera `...(order:asc|desc)...`
 
     # Make copy.
     if copy:
         make_copy = MarkdownBase(input_dir, ruta_destino=copy, ignorar_directorios=ignorar)
-        make_copy.copy()
 
     # Generamos el TOC sobre la ruta base o sobre la ruta output si este parametro se ha proporcionado.
     if toc:

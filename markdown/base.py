@@ -69,8 +69,8 @@ class MarkdownBase:
 
     def copy(self):
         if not os.path.isdir(self.ruta_base):
-            os.makedirs(os.path.dirname(self.ruta_destino), exist_ok=True)
-            return
+            msg = f"La ruta base {self.ruta_base} no es un directorio valido, por lo que no se puede hacer una copia."
+            raise Exception("ERROR", msg)
 
         if not os.path.exists(self.ruta_base):
             shutil.copytree(self.ruta_base, self.ruta_destino, ignore=shutil.ignore_patterns(*self.ignorar))
