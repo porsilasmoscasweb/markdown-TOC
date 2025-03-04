@@ -47,23 +47,6 @@ class MarkdownBase:
         """Función para ignorar archivos ocultos o que están en la lista de ignorados."""
         return nombre.startswith('.') or nombre in self.ignorar
 
-    def set_ruta_destino(self, ruta_destino=None):
-        if ruta_destino is None:
-            self.ruta_destino = self.ruta_base + '_copy'
-        else:
-            self.ruta_destino = ruta_destino
-        print(f"Ruta destino seteada a: {self.ruta_destino}")
-
-    def get_ruta_base(self):
-        return self.ruta_base
-
-    def get_ruta_destino(self):
-        return self.ruta_destino
-
-    # def get_archivo(self, nombre_archivo):
-    #     with open(nombre_archivo, 'r', encoding='utf-8') as archivo:
-    #         return archivo
-
     def leer_markdown(self, nombre_archivo):
         with open(nombre_archivo, 'r', encoding='utf-8') as archivo:
             return archivo.read()

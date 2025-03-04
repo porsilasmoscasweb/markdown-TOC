@@ -89,6 +89,6 @@ class MarkdownTOCGenerator(MarkdownBase):
             with open(os.path.join(self.ruta_destino, 'README.md'), 'w') as archivo_readme:
                 archivo_readme.write("# Tabla de Contenidos\n\n")
                 archivo_readme.write(toc)
-                print("Archivo README.md generado con éxito.")
+                print(f"Archivo README.md generado con éxito en la ruta {self.ruta_destino}.")
         else:
             print(f"No se pudo generar et TOC porque la ruta {self.ruta_destino} no es un directorio.")
