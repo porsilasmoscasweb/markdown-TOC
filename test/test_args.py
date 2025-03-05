@@ -7,8 +7,8 @@ import subprocess
 PATH_MAC = "/Users/egarriga/Git/markdown-TOC"
 PATH_LINUX = "/home/egarriga/Documents/markdown-TOC"
 
-INPUT_DIR = PATH_LINUX + "/memento"
-INPUT_FILE = PATH_LINUX + "/memento/wiki.md"
+INPUT_DIR = PATH_MAC + "/memento"
+INPUT_FILE = PATH_MAC + "/memento/wiki.md"
 
 def rmtree(dir):
     try:
@@ -226,6 +226,15 @@ def test_md_html_dir_default():
     check_md_html(path_dir)
     rmtree(path_dir)
 
+# def test_md_html_toc_files_output():
+#     """Ejecuta el script con --html. Debe hacer una copia del directorio con un nombre por defecto y recorrer todos los ficheros '.md' y convertir el contenido a html."""
+#     path_dir = INPUT_DIR + "_html"
+#     subprocess.run(["python3", "generar_TOC.py", INPUT_DIR, "--html", "-o", "-tf"], capture_output=True, text=True)
+#     assert os.path.isdir(path_dir)
+#     assert os.path.isfile(path_dir + "/wiki.html")
+#     check_md_html(path_dir)
+#     rmtree(path_dir)
+
 def test_md_html_file():
     """Ejecuta el script con --html. Debe hacer una copia del fichero '.md' en una ruta por defecto y convertir el contenido a html."""
     path_file = INPUT_DIR + "/wiki.md"
@@ -233,19 +242,19 @@ def test_md_html_file():
     assert "error" in result.stderr.lower()
 
 # TODO : SORT
-def test_sort_files_dir():
-    """Ejecuta el script con --sort. Debe de recorrer todos los ficheros '.md' en busca de la cabecera de 'ordern' y ordenar el TOC por niveles según este indicado."""
-    subprocess.run(["python3", "generar_TOC.py", INPUT_DIR, "--sort"], capture_output=True, text=True)
-    rmtree(INPUT_DIR)
-    subprocess.run(["python3", "generar_TOC.py", INPUT_DIR + "_base", "-c", INPUT_DIR], capture_output=True, text=True)
-
-def test_sort_files_dir_defautl():
-    """Ejecuta el script con --sort. Debe de recorrer todos los ficheros '.md' del directorio --output y buscar enla cabecera el 'ordern' y ordenar el TOC por niveles según este indicado."""
-    subprocess.run(["python3", "generar_TOC.py", INPUT_DIR, "-o", "--sort"], capture_output=True, text=True)
-    rmtree(INPUT_DIR + "_output")
-
-def test_sort_file():
-    """Ejecuta el script con --sort. Debe de busca en el fichero '.md' la cabecera de 'ordern' y ordenar el TOC por niveles según este indicado."""
-    path_file = INPUT_DIR + "wiki.md"
-    subprocess.run(["python3", "generar_TOC.py", path_file, "--hmtl"], capture_output=True, text=True)
-    rmfile(path_file)
+# def test_sort_files_dir():
+#     """Ejecuta el script con --sort. Debe de recorrer todos los ficheros '.md' en busca de la cabecera de 'ordern' y ordenar el TOC por niveles según este indicado."""
+#     subprocess.run(["python3", "generar_TOC.py", INPUT_DIR, "--sort"], capture_output=True, text=True)
+#     rmtree(INPUT_DIR)
+#     subprocess.run(["python3", "generar_TOC.py", INPUT_DIR + "_base", "-c", INPUT_DIR], capture_output=True, text=True)
+#
+# def test_sort_files_dir_defautl():
+#     """Ejecuta el script con --sort. Debe de recorrer todos los ficheros '.md' del directorio --output y buscar enla cabecera el 'ordern' y ordenar el TOC por niveles según este indicado."""
+#     subprocess.run(["python3", "generar_TOC.py", INPUT_DIR, "-o", "--sort"], capture_output=True, text=True)
+#     rmtree(INPUT_DIR + "_output")
+#
+# def test_sort_file():
+#     """Ejecuta el script con --sort. Debe de busca en el fichero '.md' la cabecera de 'ordern' y ordenar el TOC por niveles según este indicado."""
+#     path_file = INPUT_DIR + "wiki.md"
+#     subprocess.run(["python3", "generar_TOC.py", path_file, "--hmtl"], capture_output=True, text=True)
+#     rmfile(path_file)

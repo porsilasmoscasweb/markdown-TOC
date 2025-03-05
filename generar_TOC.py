@@ -150,6 +150,8 @@ if __name__ == "__main__":
 
     # # Si se quiere crear archivos HTML a partir de los .md.
     # # TODO tener en cuenta el estilo del HTML y del TOC a demás de modificar el slug para HTML.
-    if html is not None:
+    if html:
+        if output_dir:
+            input_dir = output_dir
         html_converter = MarkdownConverter(input_dir, output_html_dir=html)
         html_converter.process_directory_recursively_with_images(input_dir, output_dir=html)

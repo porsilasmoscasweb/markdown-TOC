@@ -1,6 +1,7 @@
 import os
 import shutil
 import re
+from unidecode import unidecode
 import markdown
 
 class MarkdownConverter:
@@ -18,6 +19,30 @@ class MarkdownConverter:
 
         self.TOC_INICIO = "<!-- TOC INICIO -->"
         self.TOC_FIN = "<!-- TOC FIN -->"
+
+    def clean_accents(self, toc_html):
+        matches = re.findall(r'(<a href="#[^"]+">)([^<]+)(</a>)', toc_html)
+        for full_match, text, closing_tag in matches:
+            new_full_match = unidecode(full_match)  # Quitar acentos
+            toc_html = toc_html.replace(f"{full_match}{text}{closing_tag}", f"{new_full_match}{text}{closing_tag}")
+        return toc_html
+
+    def generate_id(self, text):
+        text = unidecode(text)  # Remover acentos
+        text = text.lower().strip()  # Convertir a minúsculas y eliminar espacios
+        text = re.sub(r'\s+', '-', text)  # Reemplazar espacios con guiones
+        text = re.sub(r'[^a-z0-9\-]', '', text)  # Eliminar caracteres no válidos
+        return text
+
+    def add_ids_to_headers(self, new_html):
+        pattern = re.compile(r'(<h(\d)>)\s*([^<]+)\s*(</h\d>)')
+
+        def replace_header(match):
+            opening_tag, level, content, closing_tag = match.groups()
+            header_id = self.generate_id(content)
+            return f'{opening_tag[:-1]} id="{header_id}">{content}{closing_tag}'
+
+        return pattern.sub(replace_header, new_html)
 
     def convert_markdown_to_html_with_images(self,
                                              input_file,
@@ -39,11 +64,6 @@ class MarkdownConverter:
             # Leer el contenido del archivo Markdown
             with open(input_file, 'r', encoding='utf-8') as md_file:
                 markdown_content = md_file.read()
-
-            # Clean the text
-            sort_match = re.match(r'\[\/\/\]:\s*<>\s*\(order:(asc|desc)\)', markdown_content)
-            if sort_match:
-                markdown_content = self.clean_text(markdown_content, sort_match.group())
 
             # Buscar imágenes en el contenido Markdown
             image_paths = re.findall(r'!\[.*?\]\((.*?)\)', markdown_content)
@@ -67,19 +87,20 @@ class MarkdownConverter:
             # Convertir Markdown a HTML
             html = markdown.markdown(markdown_content)
 
-            # TODO : Extraer el TOC entre las etiquetas <!-- TOC INICIO --> y <!-- TOC FIN --> para que se cree en un contenedor aparte.
-            # TODO : Recorrer todo el TOC <ul> y crear un dict con el contenido de cada <li><a href="**">**texto</a></li> con la key {'#**': '**texto'}.
-            # TODO : Al recorrer el listado aprovechamos para corregir el "#link" con accentos
-            # TODO : Añadir id="ref_toc_link" a cada <h*> del contenido
-            new_html = ""
+            new_html = html
             toc_html = ""
-            toc = ""
-            content = ""
             if self.TOC_INICIO in html and self.TOC_FIN in html:
-                # Desde el TOC_FIN dividimos el contenido
-                # Desde el TOC_INICIO volvemos a dividir el contenido
-                # El nuevo html se forma con TOC_INICIO[0] + self.TOC_INICIO + toc + self.TOC_FIN + TOC_FIN[1]
-                pass
+                # Desde el TOC_FIN dividimos en toc y contenido
+                toc_html, new_html = html.split(self.TOC_FIN)
+
+                # Eliminamos el comentario de TOC_INICIO
+                toc_html = toc_html.replace(self.TOC_INICIO, "")
+
+            # Correguimos si es necesario los link del TOC
+            toc_html = self.clean_accents(toc_html)
+
+            # Añadimos los id a cada h* del contenido
+            new_html = self.add_ids_to_headers(new_html)
 
             # Crear titulo
             title = "MD HTML"
@@ -88,6 +109,8 @@ class MarkdownConverter:
                 title = match.group(1)
 
             # Crear estructura HTML
+            # <meta name="theme-color" content="#000000" />
+            # <meta property="og:image" content="https://timenet-wcp.gpisoftware.com/assets/icons/picto-timenet-512x512.png">
             html_content = f"""
             <!DOCTYPE html>
             <html>
@@ -98,8 +121,6 @@ class MarkdownConverter:
             <meta name="referrer" content="no-referrer" />
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <meta name="theme-color" content="#000000" />
-            <meta property="og:image" content="https://timenet-wcp.gpisoftware.com/assets/icons/picto-timenet-512x512.png">
             
             <link rel="icon" type="image/png" sizes="32x32" href="favicon.ico">
             <link rel="icon" type="image/png" sizes="16x16" href="favicon.ico">
@@ -125,15 +146,6 @@ class MarkdownConverter:
             print(f"Convertido: {input_file} -> {output_file}")
         except Exception as e:
             print(f"Error al procesar {input_file}: {e}")
-
-    def clean_text(self, text, remove_string):
-        # Remove the specific string (e.g., '[//]: <> (order:asc)')
-        text_without_string = re.sub(re.escape(remove_string), '', text)
-
-        # Remove empty lines and leading spaces
-        cleaned_text = '\n'.join(line.strip() for line in text_without_string.split('\n') if line.strip())
-
-        return cleaned_text
 
     def process_directory_recursively_with_images(self, input_dir, output_dir):
         """
