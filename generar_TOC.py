@@ -6,10 +6,10 @@ import argparse
 # Agregar el directorio raíz del proyecto al sys.path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from markdown.base import MarkdownBase
-from markdown.TOC import MarkdownTOCGenerator
-from markdown.TOC_files import MarkdownTOCFiles
-from markdown.TOC_html import MarkdownConverter
+from mdTOC.base import MarkdownBase
+from mdTOC.TOC import MarkdownTOCGenerator
+from mdTOC.TOC_files import MarkdownTOCFiles
+from mdTOC.MD_html import MarkdownConverter
 
 def set_default_value(value, ruta_base, default=''):
     if value is not None:
@@ -150,8 +150,6 @@ if __name__ == "__main__":
 
     # # Si se quiere crear archivos HTML a partir de los .md.
     # # TODO tener en cuenta el estilo del HTML y del TOC a demás de modificar el slug para HTML.
-    # if html is not None:
-    #     html = None if not html else html
-    #     output_html_dir = input_dir + html
-    #     html_converter = MarkdownConverter(input_dir, output_html_dir=output_html_dir)
-    #     html_converter.process_directory_recursively_with_images()
+    if html is not None:
+        html_converter = MarkdownConverter(input_dir, output_html_dir=html)
+        html_converter.process_directory_recursively_with_images(input_dir, output_dir=html)

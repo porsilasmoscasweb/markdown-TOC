@@ -1,6 +1,6 @@
 import os
 import pytest
-from markdown.TOC import MarkdownTOCGenerator
+from mdTOC.TOC import MarkdownTOCGenerator
 
 @pytest.fixture
 def generador():

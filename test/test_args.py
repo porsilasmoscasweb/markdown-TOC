@@ -4,11 +4,11 @@ import os
 import shutil
 import subprocess
 
-PATH_MAC = "/Users/egarriga/Git"
-PATH_LINUX = "/home/egarriga/Documents"
+PATH_MAC = "/Users/egarriga/Git/markdown-TOC"
+PATH_LINUX = "/home/egarriga/Documents/markdown-TOC"
 
-INPUT_DIR = PATH_MAC + "/markdown-TOC/memento"
-INPUT_FILE = PATH_MAC + "/markdown-TOC/memento/wiki.md"
+INPUT_DIR = PATH_LINUX + "/memento"
+INPUT_FILE = PATH_LINUX + "/memento/wiki.md"
 
 def rmtree(dir):
     try:
@@ -43,13 +43,13 @@ def test_copy_default():
     """Ejecuta el script con --copy sin valores. Debe crear una copia del directorio de entrada al directorio de salida por defecto, ignorando los directorios y ficheros por defecto."""
     dir_path = INPUT_DIR+"_copy"
     result = subprocess.run(["python3", "generar_TOC.py", INPUT_DIR, "--copy"], capture_output=True, text=True)
-    assert dir_path in result.stdout  # argparse mostrará un mensaje de error
+    assert dir_path in result.stdout
     rmtree(dir_path)
 
 def test_copy_file():
     """Ejecuta el script con --copy con un valor de fichero, esperando un error."""
     result = subprocess.run(["python3", "generar_TOC.py", INPUT_FILE, "--copy"], capture_output=True, text=True)
-    assert "error" in result.stderr.lower()  # argparse mostrará un mensaje de error
+    assert "error" in result.stderr.lower()
 
 def test_toc():
     """Ejecuta el script con --toc. Debe de generar el fichero README.md en la ruta base."""
@@ -192,3 +192,60 @@ def test_rm_toc_file_output_dir_file():
             if line == '<!-- TOC INICIO -->':
                 assert False
     rmtree(INPUT_DIR + "_copy")
+
+def check_md_html(path_dir):
+    have_toc, have_ul_li_link, have_h1_internal_link = False, False, False
+
+    with open(path_dir + "/wiki.html") as archivo:
+        for line in archivo:
+            if line == '<!-- TOC INICIO -->':
+                have_toc = True
+            if line == '<li><a href="#wiki">WIKI</a></li>':
+                have_ul_li_link = True
+            if line == '<h1 id="wiki">WIKI</h1>':
+                have_h1_internal_link = True
+
+    assert have_toc and have_ul_li_link and have_h1_internal_link
+
+# TODO : HTML
+def test_md_html_dir():
+    path_dir = INPUT_DIR + "_md_html"
+    """Ejecuta el script con --html. Debe hacer una copia del contenido en la ruta especificada y recorrer todos los ficheros '.md' y convertir el contenido a html."""
+    subprocess.run(["python3", "generar_TOC.py", INPUT_DIR, "--html", path_dir], capture_output=True, text=True)
+    assert os.path.isdir(path_dir)
+    assert os.path.isfile(path_dir + "/wiki.html")
+    check_md_html(path_dir)
+    rmtree(path_dir)
+
+def test_md_html_dir_default():
+    """Ejecuta el script con --html. Debe hacer una copia del directorio con un nombre por defecto y recorrer todos los ficheros '.md' y convertir el contenido a html."""
+    path_dir = INPUT_DIR + "_html"
+    subprocess.run(["python3", "generar_TOC.py", INPUT_DIR, "--html"], capture_output=True, text=True)
+    assert os.path.isdir(path_dir)
+    assert os.path.isfile(path_dir + "/wiki.html")
+    check_md_html(path_dir)
+    rmtree(path_dir)
+
+def test_md_html_file():
+    """Ejecuta el script con --html. Debe hacer una copia del fichero '.md' en una ruta por defecto y convertir el contenido a html."""
+    path_file = INPUT_DIR + "/wiki.md"
+    result = subprocess.run(["python3", "generar_TOC.py", path_file, "--html"], capture_output=True, text=True)
+    assert "error" in result.stderr.lower()
+
+# TODO : SORT
+def test_sort_files_dir():
+    """Ejecuta el script con --sort. Debe de recorrer todos los ficheros '.md' en busca de la cabecera de 'ordern' y ordenar el TOC por niveles según este indicado."""
+    subprocess.run(["python3", "generar_TOC.py", INPUT_DIR, "--sort"], capture_output=True, text=True)
+    rmtree(INPUT_DIR)
+    subprocess.run(["python3", "generar_TOC.py", INPUT_DIR + "_base", "-c", INPUT_DIR], capture_output=True, text=True)
+
+def test_sort_files_dir_defautl():
+    """Ejecuta el script con --sort. Debe de recorrer todos los ficheros '.md' del directorio --output y buscar enla cabecera el 'ordern' y ordenar el TOC por niveles según este indicado."""
+    subprocess.run(["python3", "generar_TOC.py", INPUT_DIR, "-o", "--sort"], capture_output=True, text=True)
+    rmtree(INPUT_DIR + "_output")
+
+def test_sort_file():
+    """Ejecuta el script con --sort. Debe de busca en el fichero '.md' la cabecera de 'ordern' y ordenar el TOC por niveles según este indicado."""
+    path_file = INPUT_DIR + "wiki.md"
+    subprocess.run(["python3", "generar_TOC.py", path_file, "--hmtl"], capture_output=True, text=True)
+    rmfile(path_file)

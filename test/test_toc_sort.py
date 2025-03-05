@@ -1,7 +1,7 @@
 import os
 import pytest
 from unittest.mock import mock_open, patch
-from markdown.TOC_files import MarkdownTOCFiles
+from mdTOC.TOC_files import MarkdownTOCFiles
 
 
 # Test para `es_archivo_ignorado`

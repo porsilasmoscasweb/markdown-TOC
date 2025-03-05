@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import re
-from md.base import MarkdownBase
+from mdTOC.base import MarkdownBase
 
 class MarkdownTOCFiles(MarkdownBase):
     def __init__(self,

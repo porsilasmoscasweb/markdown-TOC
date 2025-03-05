@@ -16,6 +16,9 @@ class MarkdownConverter:
         self.input_dir = input_dir
         self.output_html_dir = output_html_dir
 
+        self.TOC_INICIO = "<!-- TOC INICIO -->"
+        self.TOC_FIN = "<!-- TOC FIN -->"
+
     def convert_markdown_to_html_with_images(self,
                                              input_file,
                                              output_file,
@@ -64,9 +67,19 @@ class MarkdownConverter:
             # Convertir Markdown a HTML
             html = markdown.markdown(markdown_content)
 
+            # TODO : Extraer el TOC entre las etiquetas <!-- TOC INICIO --> y <!-- TOC FIN --> para que se cree en un contenedor aparte.
+            # TODO : Recorrer todo el TOC <ul> y crear un dict con el contenido de cada <li><a href="**">**texto</a></li> con la key {'#**': '**texto'}.
+            # TODO : Al recorrer el listado aprovechamos para corregir el "#link" con accentos
             # TODO : Añadir id="ref_toc_link" a cada <h*> del contenido
-
-            # TODO : Extraer el TOC entre las etiquetas <!-- TOC INICIO --> y <!-- TOC FIN --> para que se cree en un contenedor aparte
+            new_html = ""
+            toc_html = ""
+            toc = ""
+            content = ""
+            if self.TOC_INICIO in html and self.TOC_FIN in html:
+                # Desde el TOC_FIN dividimos el contenido
+                # Desde el TOC_INICIO volvemos a dividir el contenido
+                # El nuevo html se forma con TOC_INICIO[0] + self.TOC_INICIO + toc + self.TOC_FIN + TOC_FIN[1]
+                pass
 
             # Crear titulo
             title = "MD HTML"
@@ -75,22 +88,36 @@ class MarkdownConverter:
                 title = match.group(1)
 
             # Crear estructura HTML
-            head_content = f"""
+            html_content = f"""
             <!DOCTYPE html>
             <html>
             <head>
+            
+            <meta name="robots" content="noindex, nofollow" />
+            <meta name="google" content="notranslate" />
+            <meta name="referrer" content="no-referrer" />
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <meta name="theme-color" content="#000000" />
+            <meta property="og:image" content="https://timenet-wcp.gpisoftware.com/assets/icons/picto-timenet-512x512.png">
+            
+            <link rel="icon" type="image/png" sizes="32x32" href="favicon.ico">
+            <link rel="icon" type="image/png" sizes="16x16" href="favicon.ico">
+            <link rel="stylesheet" type="text/css" href="styles.css">
+            
+            <style>
+            </style>
+            
             <title>{title.title()}</title>
             </head>
             <body>
-            """
-            footer_content = """
+            <div id="wrapper">
+            <div id="nav_toc">{toc_html}</div>
+            <div id="content">{new_html}</div>
+            </div>
             </body>
             </html>
             """
-
-            html_content = head_content + html + footer_content
 
             # Guardar el HTML en el archivo de salida
             with open(output_file, 'w', encoding='utf-8') as html_file:
@@ -116,6 +143,10 @@ class MarkdownConverter:
         :param output_dir: Directorio raíz de salida para guardar los archivos HTML e imágenes.
         """
         try:
+            if not os.path.isdir(input_dir):
+                msg = f"La ruta base {input_dir} no es un directorio valido, por lo que no se puede hacer una copia."
+                raise Exception("ERROR", msg)
+
             for root, _, files in os.walk(input_dir):
                 for file in files:
                     if file.endswith(".md"):
@@ -129,5 +160,4 @@ class MarkdownConverter:
                         # Convertir Markdown a HTML y manejar imágenes
                         self.convert_markdown_to_html_with_images(input_file, output_file, input_dir, output_dir)
         except:
-            msg = f"Error al procesar el directorio: {input_file}"
-            raise Exception("Error", msg)
+            raise Exception("Error", f"Error al procesar el directorio: {input_file}")
