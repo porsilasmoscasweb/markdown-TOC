@@ -32,6 +32,9 @@ class MarkdownBase:
             ignorar_directorios = []
         self.ignorar += ignorar_directorios
 
+        if ruta_destino is None:
+            ruta_destino = ruta_base + "_base"
+
         # Ruta destino y crear directorio destino si es diferente de ruta_base
         if ruta_destino and ruta_destino != ruta_base:
             self.ruta_destino = ruta_destino

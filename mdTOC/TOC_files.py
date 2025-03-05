@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import re
-from markdown.base import MarkdownBase
+from md.base import MarkdownBase
 
 class MarkdownTOCFiles(MarkdownBase):
     def __init__(self,
@@ -168,19 +168,3 @@ class MarkdownTOCFiles(MarkdownBase):
     def generar_actualizar_toc(self, ruta_destino):
         toc = self.generar_toc_para_archivo(ruta_destino)
         self.actualizar_toc_en_archivo_markdown(ruta_destino, toc)
-
-    # def work(self, ruta_base):
-    #     # Obtenemos el contenido del archivo con el que vamos a trabajar
-    #     print(ruta_base)
-    #     with open(ruta_base, "r", encoding="utf-8") as archivo:
-    #         # Comprovamos si el archivo se tiene que ordenar
-    #         orden, sort_line, contenido = self.get_sort(archivo)
-    #         if orden:
-    #             # Ordenamos el contenido del fichero
-    #             contenido = self.ordenar(contenido, ascendente=(orden == 'asc'))
-    #
-    #         # Actualizamos el archivo
-    #         if self.toc_files:
-    #             # Si es un archivo Markdown, procesar solo ese archivo
-    #             toc = self.generar_toc_para_archivo_or_sort(contenido)
-    #             self.actualizar_toc_en_archivo_markdown(ruta_base, toc)
