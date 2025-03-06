@@ -6,8 +6,8 @@ import argparse
 # Agregar el directorio raíz del proyecto al sys.path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from mdTOC.base import MarkdownBase
-from mdTOC.TOC import MarkdownTOCGenerator
+from mdTOC.core import MarkdownBase
+from mdTOC.TO import MarkdownTOCGenerator
 from mdTOC.TOC_files import MarkdownTOCFiles
 from mdTOC.MD_html import MarkdownConverter
 
