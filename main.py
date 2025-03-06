@@ -7,9 +7,9 @@ import argparse
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from mdTOC.core import MarkdownBase
-from mdTOC.TO import MarkdownTOCGenerator
-from mdTOC.TOC_files import MarkdownTOCFiles
-from mdTOC.MD_html import MarkdownConverter
+from mdTOC.toc import MarkdownTOCGenerator
+from mdTOC.toc_files import MarkdownTOCFiles
+from mdTOC.md_html import MarkdownConverter
 
 def set_default_value(value, ruta_base, default=''):
     if value is not None:

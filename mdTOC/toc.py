@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
-from mdTOC.base import MarkdownBase
+from mdTOC.core import MarkdownBase
 
 class MarkdownTOCGenerator(MarkdownBase):
     def __init__(self,
