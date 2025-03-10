@@ -24,15 +24,7 @@ class MdToc:
         if self.valid_path(root_path):
             self.root_path = root_path
 
-        if destination_path is None:
-            self.destination_path = self.root_path
-        else:
-            if self.valid_path(destination_path):
-                if self.root_path == destination_path:
-                    self.destination_path = destination_path
-                else:
-                    self.copy(root_path=self.root_path, destination_path=destination_path, ignore=self.ignore)
-                    self.destination_path = destination_path
+        self.setter_destination_path(destination_path)
 
         self.output_toc_filename = output_toc_filename + ".md"
 
@@ -44,6 +36,16 @@ class MdToc:
             f"\t* The TOC file will be: {self.output_toc_filename}.\r\n"
         )
 
+    def setter_destination_path(self, destination_path):
+        if destination_path is None:
+            destination_path = self.root_path
+        else:
+            if self.valid_path(destination_path):
+                if self.root_path != destination_path:
+                    self.copy(root_path=self.root_path, destination_path=destination_path, ignore=self.ignore)
+            else:
+                raise Exception("ERROR", f"Tha path {destination_path} is not valid.")
+        self.destination_path = destination_path
 
     def valid_path(self, full_path):
         """
