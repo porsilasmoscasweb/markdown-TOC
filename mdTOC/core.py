@@ -43,8 +43,6 @@ class MdToc:
             if self.valid_path(destination_path):
                 if self.root_path != destination_path:
                     self.copy(root_path=self.root_path, destination_path=destination_path, ignore=self.ignore)
-            else:
-                raise Exception("ERROR", f"Tha path {destination_path} is not valid.")
         self.destination_path = destination_path
 
     def valid_path(self, full_path):
@@ -57,8 +55,14 @@ class MdToc:
         Returns:
             str: Name formated.
         """
+        # import pdb
+        # pdb.set_trace()
+        if not os.path.isdir(os.path.dirname(full_path)):
+            raise Exception("ERROR", f"The path {full_path} is not valid.")
+
         if any(shutil.fnmatch.fnmatch(full_path, pattern) for pattern in self.ignore):
             raise Exception("ERROR", f"The Path {full_path} is on list of ignore argument.")
+
         return True
 
     def has_ignore(self, name):

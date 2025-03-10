@@ -2,7 +2,7 @@
 import shutil
 import os
 
-from mdTOC.toc_files import MarkdownTOCFiles
+from mdTOC.core import MdToc
 
 ABSPATH = os.path.abspath('')
 INPUT_DIR = ABSPATH + "/mdTOC/test"
@@ -33,15 +33,16 @@ def check_text_on_file(path_file, text_to_check):
 
 def test_none_args():
     try:
-        MarkdownTOCFiles()
+        MdToc()
     except Exception as e:
-        assert "MarkdownTOCFiles.__init__() missing 1 required positional argument: 'root_path'" in str(e)
+        assert "MdToc.__init__() missing 1 required positional argument: 'root_path'" in str(e)
 
 
 def test_only_root_dir_args():
     destination_path = INPUT_DIR + "/test_dir"
+    rmtree(destination_path)
     toc_filename = INPUT_DIR + "/test_dir/TOC.md"
-    MarkdownTOCFiles(INPUT_DIR)
+    MdToc(INPUT_DIR)
     assert not os.path.exists(destination_path)
     assert not os.path.exists(toc_filename)
 
@@ -51,7 +52,7 @@ def test_diff_root_than_destination_path_args():
     toc_filename = destination_path + "/TOC.md"
     rmtree(destination_path)
     try:
-        MarkdownTOCFiles(root_path, destination_path)
+        MdToc(root_path, destination_path)
         assert os.path.exists(destination_path)
         assert os.path.exists(destination_path)
         assert not os.path.exists(toc_filename)
@@ -64,7 +65,7 @@ def test_toc_args():
     toc_filename = destination_path + "/TOC.md"
     rmtree(destination_path)
     try:
-        generador = MarkdownTOCFiles(root_path, destination_path)
+        generador = MdToc(root_path, destination_path)
         generador.create_toc()
         assert os.path.exists(destination_path)
         assert os.path.exists(toc_filename)
@@ -78,7 +79,7 @@ def test_toc_output_file_name_args():
     toc_filename = destination_path + "/test_TOC_file_name.md"
     rmtree(destination_path)
     try:
-        generador = MarkdownTOCFiles(root_path, destination_path=destination_path, output_toc_filename="test_TOC_file_name")
+        generador = MdToc(root_path, destination_path=destination_path, output_toc_filename="test_TOC_file_name")
         generador.create_toc()
         assert os.path.exists(destination_path)
         assert os.path.exists(toc_filename)
@@ -93,7 +94,7 @@ def test_toc_ignore_dir():
     toc_filename = destination_path + "/TOC.md"
     rmtree(destination_path)
     try:
-        generador = MarkdownTOCFiles(root_path, destination_path=destination_path, ignore=["ignore_dir"])
+        generador = MdToc(root_path, destination_path=destination_path, ignore=["ignore_dir"])
         generador.create_toc()
         assert os.path.exists(toc_filename)
         assert not os.path.exists(destination_path + "/ignore_dir")
@@ -107,7 +108,7 @@ def test_toc_ignore_file():
     toc_filename = destination_path + "/TOC.md"
     rmtree(destination_path)
     try:
-        generador = MarkdownTOCFiles(root_path, destination_path=destination_path, ignore=["ignore_file1.md"])
+        generador = MdToc(root_path, destination_path=destination_path, ignore=["ignore_file1.md"])
         generador.create_toc()
         assert os.path.exists(toc_filename)
         assert not os.path.exists(destination_path + "/ignore_file1.md")
@@ -121,7 +122,7 @@ def test_toc_ignore_dir_and_file():
     toc_filename = destination_path + "/TOC.md"
     rmtree(destination_path)
     try:
-        generador = MarkdownTOCFiles(root_path, destination_path=destination_path, ignore=["ignore_dir", "ignore_file1.md"])
+        generador = MdToc(root_path, destination_path=destination_path, ignore=["ignore_dir", "ignore_file1.md"])
         generador.create_toc()
         assert os.path.exists(toc_filename)
         assert not os.path.exists(destination_path + "/ignore_dir")
@@ -135,9 +136,59 @@ def test_ERROR_destination_path_exists():
     destination_path = INPUT_DIR + "/test_dir"
     rmtree(destination_path)
     try:
-        MarkdownTOCFiles(root_path, destination_path=destination_path)
-        MarkdownTOCFiles(root_path, destination_path=destination_path)
+        MdToc(root_path, destination_path=destination_path)
+        MdToc(root_path, destination_path=destination_path)
     except Exception as e:
         assert f'The destination Path {INPUT_DIR}/test_dir already exist.' in str(e)
+    finally:
+        rmtree(destination_path)
+
+def test_copy():
+    root_path = INPUT_DIR + "/test_default"
+    destination_path = INPUT_DIR + "/test_dir"
+    rmtree(destination_path)
+    try:
+        md_toc = MdToc(root_path)
+        md_toc.setter_destination_path(destination_path=destination_path)
+        assert os.path.exists(destination_path)
+    finally:
+        rmtree(destination_path)
+
+def test_ERROR_copy():
+    root_path = INPUT_DIR + "/test_default"
+    destination_path = INPUT_DIR + "/test_dir"
+    rmtree(destination_path)
+    try:
+        MdToc(root_path)
+        assert not os.path.exists(destination_path)
+    finally:
+        rmtree(destination_path)
+
+def test_ERROR_invalid_destination_path():
+    root_path = INPUT_DIR + "/test_default"
+    destination_path = INPUT_DIR + "/test_dir/md.md"
+    try:
+        MdToc(root_path, destination_path=destination_path)
+    except Exception as e:
+        assert "ERROR", f"The path {destination_path} is not valid." in str(e)
+    finally:
+        rmtree(destination_path)
+
+def test_ERROR_invalid_destination_path_with_setter():
+    root_path = INPUT_DIR + "/test_default"
+    destination_path = INPUT_DIR + "/test_dir/md.md"
+    try:
+        md_toc = MdToc(root_path)
+        md_toc.setter_destination_path(destination_path=destination_path)
+    except Exception as e:
+        assert "ERROR", f"The path {destination_path} is not valid." in str(e)
+    finally:
+        rmtree(destination_path)
+
+    destination_path = INPUT_DIR + "/test_dir"
+    try:
+        md_toc = MdToc(root_path)
+        md_toc.setter_destination_path(destination_path=destination_path)
+        assert os.path.exists(destination_path)
     finally:
         rmtree(destination_path)
