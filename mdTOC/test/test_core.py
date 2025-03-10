@@ -91,6 +91,17 @@ def test_toc_output_file_name_args():
 def test_toc_ignore_dir():
     root_path = INPUT_DIR + "/test_default"
     destination_path = INPUT_DIR + "/test_dir"
+    rmtree(destination_path)
+    try:
+        MdToc(root_path, destination_path=destination_path, ignore="string_value_error")
+    except Exception as e:
+        assert "The ignore string_value_error value must be a list not string." in e
+    finally:
+        rmtree(destination_path)
+
+def test_toc_ignore_dir():
+    root_path = INPUT_DIR + "/test_default"
+    destination_path = INPUT_DIR + "/test_dir"
     toc_filename = destination_path + "/TOC.md"
     rmtree(destination_path)
     try:

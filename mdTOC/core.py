@@ -17,6 +17,9 @@ class MdToc:
         if not os.path.isdir(root_path):
             raise Exception("ERROR", f"The Root Path provided {root_path} is not a correct directory, so we cannot generate the TOC.")
 
+        if isinstance(ignore, str):
+            raise Exception("ERROR", f"The ignore {ignore} value must be a list not string.")
+
         self.ignore = ['.DS_Store', '.gitignore', '.idea', '*.log']
         if ignore is not None and isinstance(ignore, list):
             self.ignore += ignore
@@ -55,8 +58,6 @@ class MdToc:
         Returns:
             str: Name formated.
         """
-        # import pdb
-        # pdb.set_trace()
         if not os.path.isdir(os.path.dirname(full_path)):
             raise Exception("ERROR", f"The path {full_path} is not valid.")
 

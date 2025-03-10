@@ -37,6 +37,69 @@ def test_none_args():
     except Exception as e:
         assert "MarkdownTOCFiles.__init__() missing 1 required positional argument: 'root_path'" in str(e)
 
+def test_toc_and_toc_files():
+    root_path = INPUT_DIR + "/test_default"
+    destination_path = INPUT_DIR + "/test_dir"
+    rmtree(destination_path)
+    try:
+        generador = MarkdownTOCFiles(root_path, destination_path=destination_path, toc_files=True)
+        generador.create_toc()
+        toc_start = generador.get_toc_start()
+        toc_end = generador.get_toc_end()
+        assert os.path.exists(destination_path + "/TOC.md")
+        assert check_text_on_file(destination_path + "/TOC.md", "# Table of Contents")
+        assert not check_text_on_file(destination_path + "/TOC.md", toc_start)
+        generador.procesar_archivos_markdown()
+        assert os.path.exists(destination_path)
+        assert check_text_on_file(destination_path + "/file1.md", toc_start)
+        assert check_text_on_file(destination_path + "/file1.md", toc_end)
+        assert check_text_on_file(destination_path + "/file1.md", "## Subtitle 4")
+        assert check_text_on_file(destination_path + "/TOC.md", toc_start)
+    finally:
+        rmtree(destination_path)
+
+def test_toc_and_toc_files_with_toc_ignore():
+    root_path = INPUT_DIR + "/test_default"
+    destination_path = INPUT_DIR + "/test_dir"
+    rmtree(destination_path)
+    try:
+        generador = MarkdownTOCFiles(root_path, destination_path=destination_path, toc_files=True, ignore=["TOC.md"])
+        generador.create_toc()
+        toc_start = generador.get_toc_start()
+        toc_end = generador.get_toc_end()
+        assert os.path.exists(destination_path + "/TOC.md")
+        assert check_text_on_file(destination_path + "/TOC.md", "# Table of Contents")
+        assert not check_text_on_file(destination_path + "/TOC.md", toc_start)
+        generador.procesar_archivos_markdown()
+        assert os.path.exists(destination_path)
+        assert check_text_on_file(destination_path + "/file1.md", toc_start)
+        assert check_text_on_file(destination_path + "/file1.md", toc_end)
+        assert check_text_on_file(destination_path + "/file1.md", "## Subtitle 4")
+        assert not check_text_on_file(destination_path + "/TOC.md", toc_start)
+    finally:
+        rmtree(destination_path)
+
+def test_toc_and_toc_files_with_toc_ignore_error_ignore_name():
+    root_path = INPUT_DIR + "/test_default"
+    destination_path = INPUT_DIR + "/test_dir"
+    rmtree(destination_path)
+    try:
+        generador = MarkdownTOCFiles(root_path, destination_path=destination_path, toc_files=True, ignore=["test.md"])
+        generador.create_toc()
+        toc_start = generador.get_toc_start()
+        toc_end = generador.get_toc_end()
+        assert os.path.exists(destination_path + "/TOC.md")
+        assert check_text_on_file(destination_path + "/TOC.md", "# Table of Contents")
+        assert not check_text_on_file(destination_path + "/TOC.md", toc_start)
+        generador.procesar_archivos_markdown()
+        assert os.path.exists(destination_path)
+        assert check_text_on_file(destination_path + "/file1.md", toc_start)
+        assert check_text_on_file(destination_path + "/file1.md", toc_end)
+        assert check_text_on_file(destination_path + "/file1.md", "## Subtitle 4")
+        assert check_text_on_file(destination_path + "/TOC.md", toc_start)
+    finally:
+        rmtree(destination_path)
+
 def test_toc_files():
     root_path = INPUT_DIR + "/test_default"
     destination_path = INPUT_DIR + "/test_dir"
