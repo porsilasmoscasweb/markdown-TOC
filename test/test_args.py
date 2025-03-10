@@ -3,16 +3,14 @@ import platform
 import os
 import shutil
 import subprocess
+from mdTOC.core import MdToc
 
-PATH_MAC = "/Users/egarriga/Git/markdown-TOC"
-PATH_LINUX = "/home/egarriga/Documents/markdown-TOC"
+ABSPATH = os.path.abspath('')
+INPUT_DIR = ABSPATH + "/test"
 
-INPUT_DIR = PATH_MAC + "/memento"
-INPUT_FILE = PATH_MAC + "/memento/wiki.md"
-
-def rmtree(dir):
+def rmtree(dir_path):
     try:
-        shutil.rmtree(dir)
+        shutil.rmtree(dir_path)
     except OSError as e:
         print(f"Error: {e.strerror}")
 

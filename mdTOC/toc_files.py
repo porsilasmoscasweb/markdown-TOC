@@ -1,40 +1,35 @@
 # -*- coding: utf-8 -*-
 import os
 import re
-from mdTOC.core import MarkdownBase
+from unidecode import unidecode
+from mdTOC.core import MdToc
 
-class MarkdownTOCFiles(MarkdownBase):
-    def __init__(self,
-                 ruta_base,
-                 ruta_destino=None,
-                 toc_files=False,
-                 rm_toc_files=False,
-                 toc_sort=False,
-                 ignorar_directorios=None):
+class MarkdownTOCFiles(MdToc):
+    def __init__(self, root_path, destination_path=None, ignore=None, output_toc_filename="TOC", toc_files=False, rm_toc_files=False):
         """
-        Inicializa la clase con el directorio base y la lista de directorios a ignorar.
-        Definir inició i fin del bloque TOC dentro de ficheros
+        Initializes the class with the base directory, destination directory, and the list of directories to ignore to a file .md.
 
-        :param ruta_base: Ruta base del directorio.
-        :param ignorar_directorios: Lista de directorios a ignorar (opcional).
+        Args:
+            root_path: Base path of the directory.
+            destination_path: Path of the directory.
+            ignore: List of directories to ignore.
+            output_toc_filename: Name of de resulting TOC file name.
+            toc_files: Create toc on each md file from root_path
+            rm_toc_files: Remove toc on each md file from root_path
         """
-        super().__init__(ruta_base,
-                         ruta_destino=ruta_destino,
-                         ignorar_directorios=ignorar_directorios)
+        super().__init__(root_path, destination_path=destination_path, ignore=ignore, output_toc_filename=output_toc_filename)
 
         self.toc_files = toc_files
         self.rm_toc_files = rm_toc_files
-        self.toc_sort = toc_sort
+
         self.TOC_INICIO = "<!-- TOC INICIO -->"
         self.TOC_FIN = "<!-- TOC FIN -->"
 
-    def es_archivo_ignorado(self, nombre):
-        return super().es_archivo_ignorado(nombre)
+    def get_toc_start(self):
+        return self.TOC_INICIO
 
-    def es_parte_de_ruta_ignorada(self, nombre):
-        """Función para ignorar directorios que están en la lista de ignorados."""
-        ignorar = [s for s in self.ignorar if s in nombre]
-        return ignorar
+    def get_toc_end(self):
+        return self.TOC_FIN
 
     def generar_slug(self, heading):
         """
@@ -43,8 +38,39 @@ class MarkdownTOCFiles(MarkdownBase):
         """
         slug = heading.strip().lower()
         slug = re.sub(r'[^\w\s-]', '', slug)  # Eliminar caracteres especiales
-        slug = slug.replace(' ', '-')  # Reemplazar espacios por guiones
+        slug = slug.replace(' ', '-')
+        slug = unidecode(slug)# Reemplazar espacios por guiones
         return slug
+
+    def get_content(self, ruta_archivo):
+        toc = False
+        nuevo_contenido = ""
+        contenido = self.leer_markdown(ruta_archivo)
+        has_toc_start = self.TOC_INICIO in contenido
+        has_toc_end = self.TOC_FIN in contenido
+        if has_toc_start and has_toc_end:
+            toc = contenido.split(self.TOC_FIN)[0].strip()
+            toc = toc.split(self.TOC_INICIO)[1].strip()
+            nuevo_contenido = contenido.split(self.TOC_FIN)[1].strip()
+        elif has_toc_start and has_toc_end:
+            if not has_toc_end:
+                raise Exception("ERROR", f"The file {ruta_archivo} has a bad TOC format generated with none end toc")
+            if not has_toc_start:
+                print("ERROR", f"The file {ruta_archivo} has a bad TOC format generated with none start toc. We get the init content of the file.")
+                nuevo_contenido = contenido.split(self.TOC_FIN)[1].strip()
+        else:
+            nuevo_contenido = contenido.strip()
+
+        return toc, nuevo_contenido
+
+    # def has_sort(self, content):
+    #     # Detectar si el archivo contiene la directiva de orden
+    #     sort_content = False
+    #     match = re.match(r'\[\/\/\]:\s*<>\s*\(order:(asc|desc)\)', content)
+    #     if match:
+    #         sort_content = match.group() + "\n\n"
+    #         sort_content = sort_content.split(match.group())[1]
+    #     return sort_content
 
     def generar_toc_para_archivo(self, ruta_archivo):
         """
@@ -52,7 +78,7 @@ class MarkdownTOCFiles(MarkdownBase):
         ignorando aquellos que estén dentro de bloques de código.
 
         Args:
-            ruta_archivo (str): Ruta del archivo Markdown.
+            content (str): content Markdown from the file.
 
         Returns:
             str: TOC en formato markdown.
@@ -79,35 +105,29 @@ class MarkdownTOCFiles(MarkdownBase):
 
         return "\n".join(toc)
 
-    def actualizar_toc_en_archivo_markdown(self,
-                                           ruta_archivo,
-                                           toc):
-        """
-        Actualiza el TOC en un archivo Markdown, añadiéndolo o sustituyéndolo
-        entre los delimitadores TOC_INICIO y TOC_FIN.
+    @staticmethod
+    def leer_markdown(ruta_archivo):
+        try:
+            with open(ruta_archivo, 'r', encoding='utf-8') as archivo:
+                return archivo.read()
+        except Exception as e:
+            raise Exception("ERROR", f"Can not read file {ruta_archivo}")
 
-        Args:
-            ruta_archivo (str): Ruta del archivo Markdown.
-            toc (str): Contenido del TOC generado.
-        """
-        nuevo_contenido = ""
-        contenido = self.leer_markdown(ruta_archivo)
+    @staticmethod
+    def content_markdown(self, ruta_archivo):
+        try:
+            with open(ruta_archivo, 'r', encoding='utf-8') as archivo:
+                return archivo
+        except Exception as e:
+            raise Exception("ERROR", f"Can not read file {ruta_archivo}")
 
-        # Detectar si el archivo contiene la directiva de orden
-        match = re.match(r'\[\/\/\]:\s*<>\s*\(order:(asc|desc)\)', contenido)
-        if match:
-            nuevo_contenido = match.group() + "\n\n"
-            contenido = contenido.split(match.group())[1]
-
-        if self.TOC_INICIO in contenido and self.TOC_FIN in contenido:
-            # Reemplazar TOC existente
-            nuevo_contenido += contenido.split(self.TOC_INICIO)[0].strip() + self.TOC_INICIO + "\n" + toc + "\n" + self.TOC_FIN + \
-                              "\n\n" + contenido.split(self.TOC_FIN)[1].strip()
-        else:
-            # Añadir TOC al principio
-            nuevo_contenido += self.TOC_INICIO + "\n" + toc + "\n" + self.TOC_FIN + contenido
-
-        self.guardar_markdown(ruta_archivo, nuevo_contenido)
+    @staticmethod
+    def guardar_markdown(ruta_archivo, contenido):
+        try:
+            with open(ruta_archivo, 'w', encoding='utf-8') as archivo:
+                archivo.write(contenido)
+        except Exception as e:
+            raise Exception("ERROR", f"Can not write on file {ruta_archivo}")
 
     def eliminar_toc_en_archivo_markdown(self, ruta_archivo):
         """
@@ -116,19 +136,12 @@ class MarkdownTOCFiles(MarkdownBase):
         Args:
             ruta_archivo (str): Ruta del archivo Markdown.
         """
-        nuevo_contenido = ""
-        contenido = self.leer_markdown(ruta_archivo)
-
-        # Detectar si el archivo contiene la directiva de orden
-        match = re.match(r'\[\/\/\]:\s*<>\s*\(order:(asc|desc)\)', contenido)
-        if match:
-            nuevo_contenido = match.group() + "\n\n"
-            contenido = contenido.split(match.group())[1]
-
-        if self.TOC_INICIO in contenido and self.TOC_FIN in contenido:
-            # Reemplazar TOC existente
-            nuevo_contenido += contenido.split(self.TOC_INICIO)[0].strip() + contenido.split(self.TOC_FIN)[1].strip()
-            self.guardar_markdown(ruta_archivo, nuevo_contenido)
+        try:
+            toc, content = self.get_content(ruta_archivo)
+            self.guardar_markdown(ruta_archivo, content)
+            return True
+        except:
+            raise Exception("ERROR", f"Al eleminar el TOC del fichero {ruta_archivo}")
 
     def procesar_archivos_markdown(self, ruta_destino=None):
         """
@@ -139,7 +152,7 @@ class MarkdownTOCFiles(MarkdownBase):
             ruta_destino (str): Ruta ruta_destino del directorio o archivo Markdown.
         """
         if ruta_destino is None:
-            ruta_destino = self.ruta_destino
+            ruta_destino = self.destination_path
 
         if os.path.isfile(ruta_destino) and ruta_destino.endswith('.md'):
             # Si es un archivo Markdown, procesar solo ese archivo
@@ -151,12 +164,12 @@ class MarkdownTOCFiles(MarkdownBase):
             # Si es un directorio, procesar todos los archivos Markdown en el directorio
             for directorio_actual, subdirectorios, archivos in os.walk(ruta_destino):
                 # Omitir directorios
-                if self.es_parte_de_ruta_ignorada(directorio_actual):
+                if self.file_has_ignore_part(directorio_actual):
                     continue
 
                 for archivo in archivos:
                     # Generar TOC para archivos markdown si no estan en la lista de ignorados
-                    if archivo.endswith('.md') and not self.es_archivo_ignorado(archivo):
+                    if archivo.endswith('.md') and not self.has_ignore(archivo):
                         ruta_archivo = os.path.join(directorio_actual, archivo)
                         if self.rm_toc_files:
                             self.eliminar_toc_en_archivo_markdown(str(ruta_archivo))
@@ -166,5 +179,7 @@ class MarkdownTOCFiles(MarkdownBase):
             print(f"La ruta proporcionada no es un archivo .md válido o un directorio: {ruta_destino}")
 
     def generar_actualizar_toc(self, ruta_destino):
+        toc, content = self.get_content(ruta_destino)
         toc = self.generar_toc_para_archivo(ruta_destino)
-        self.actualizar_toc_en_archivo_markdown(ruta_destino, toc)
+        new_content = self.TOC_INICIO + "\n" + toc + "\n" + self.TOC_FIN + "\n\n" + content
+        self.guardar_markdown(ruta_destino, new_content)

@@ -1,171 +1,209 @@
 # -*- coding: utf-8 -*-
 import os
-import re
 import shutil
 
 
-class MarkdownBase:
-    def __init__(self,
-                 ruta_base,
-                 ruta_destino=None,
-                 ignorar_directorios=None):
+class MdToc:
+    def __init__(self, root_path, destination_path=None, ignore=None, output_toc_filename="TOC"):
         """
-        Inicializa la clase con el directorio base y la lista de directorios a ignorar.
+        Initializes the class with the base directory, destination directory, and the list of directories to ignore to a file .md.
 
-        :param ruta_base: Ruta base del directorio.
-        :param ignorar_directorios: Lista de directorios a ignorar (opcional).
+        Args:
+            root_path: Base path of the directory.
+            destination_path: Path of the directory.
+            ignore: List of directories to ignore.
+            output_toc_filename: Name of de resulting TOC file name.
         """
-        self.ruta_base = ruta_base
+        if not os.path.isdir(root_path):
+            raise Exception("ERROR", f"The Root Path provided {root_path} is not a correct directory, so we cannot generate the TOC.")
 
-        # Ignorar
-        self.ignorar = ['README.md',
-                        '.DS_Store',
-                        '.gitignore',
-                        '.idea',
-                        'books',
-                        'exercices',
-                        'footage',
-                        'tools',
-                        'planning',
-                        '*.log']
-        if ignorar_directorios is None:
-            ignorar_directorios = []
-        self.ignorar += ignorar_directorios
+        self.ignore = ['.DS_Store', '.gitignore', '.idea', '*.log']
+        if ignore is not None and isinstance(ignore, list):
+            self.ignore += ignore
 
-        if ruta_destino is None:
-            ruta_destino = ruta_base + "_base"
+        if self.valid_path(root_path):
+            self.root_path = root_path
 
-        # Ruta destino y crear directorio destino si es diferente de ruta_base
-        if ruta_destino and ruta_destino != ruta_base:
-            self.ruta_destino = ruta_destino
-            self.copy()
+        if destination_path is None:
+            self.destination_path = self.root_path
         else:
-            self.ruta_destino = ruta_base
+            if self.valid_path(destination_path):
+                if self.root_path == destination_path:
+                    self.destination_path = destination_path
+                else:
+                    self.copy(root_path=self.root_path, destination_path=destination_path, ignore=self.ignore)
+                    self.destination_path = destination_path
 
-        # Patrones
-        self.patrones_bloques = [
-            r'```.*?```',
-            r"'''.*?'''",
-            r'""".*?"""',
-            r"'[^']*'",
-            r'"[^"]*"',
-            r'<!--.*?-->'
-        ]
-        self.bloques_ignorados = []
+        self.output_toc_filename = output_toc_filename + ".md"
 
-        print(f"Ruta base: {self.ruta_base}")
-        print(f"Ruta destino: {self.ruta_destino}")
-        print(f"Ignoramos: {self.ignorar}")
+        print(
+            f"Instance created with:\n"
+            f"\t* Root path: {self.root_path}\n"
+            f"\t* Destination path: {self.destination_path}\n"
+            f"\t* List of directories and files to ignore: [{', '.join(self.ignore)}].\n"
+            f"\t* The TOC file will be: {self.output_toc_filename}.\r\n"
+        )
 
-    def es_archivo_ignorado(self, nombre):
-        """Función para ignorar archivos ocultos o que están en la lista de ignorados."""
-        return nombre.startswith('.') or nombre in self.ignorar
 
-    def leer_markdown(self, nombre_archivo):
-        with open(nombre_archivo, 'r', encoding='utf-8') as archivo:
-            return archivo.read()
+    def valid_path(self, full_path):
+        """
+        Check if the Path is on the ignore list.
 
-    def guardar_markdown(self,
-                         nombre_archivo,
-                         contenido):
-        with open(nombre_archivo, 'w', encoding='utf-8') as archivo:
-            archivo.write(contenido)
+        Args:
+            full_path (str): Path.
 
-    def get_sort(self, contenido):
-        orden = False
-        primera_linea = contenido.readline().strip()
-        nuevo_contenido = contenido.read().lstrip()
+        Returns:
+            str: Name formated.
+        """
+        if any(shutil.fnmatch.fnmatch(full_path, pattern) for pattern in self.ignore):
+            raise Exception("ERROR", f"The Path {full_path} is on list of ignore argument.")
+        return True
 
-        # Detectar si el archivo contiene la directiva de orden
-        match = re.match(r'\[\/\/\]:\s*<>\s*\(order:(asc|desc)\)', primera_linea)
-        if match:
-            orden = match.group(1)
+    def has_ignore(self, name):
+        """
+        Ignore hidden files or files that are on the ignore list.
 
-        return orden, primera_linea, nuevo_contenido
+        Args:
+            name (str):
 
-    def copy(self):
-        if not os.path.isdir(self.ruta_base):
-            msg = f"La ruta base {self.ruta_base} no es un directorio valido, por lo que no se puede hacer una copia."
-            raise Exception("ERROR", msg)
+        Returns:
+            boolean:
+        """
+        return name.startswith('.') or name in self.ignore
 
-        if not os.path.exists(self.ruta_base):
-            shutil.copytree(self.ruta_base, self.ruta_destino, ignore=shutil.ignore_patterns(*self.ignorar))
+    def file_has_ignore_part(self, name):
+        """Función para ignorar directorios que están en la lista de ignorados."""
+        ignore = [s for s in self.ignore if s in name]
+        return ignore
+
+    def copy(self, root_path=None, destination_path=None, ignore=None):
+        """
+        Copy all files except ignored ones from root path to destination path
+
+        Args:
+            root_path: Base path of the directory. (optional)
+            destination_path: Path of the directory (optional).
+            ignore: List of directories to ignore (optional).
+        """
+        if root_path is None:
+            root_path = self.root_path
         else:
-            for item in os.listdir(self.ruta_base):
-                origen_item = os.path.join(self.ruta_base, item)
-                destino_item = os.path.join(self.ruta_destino, item)
+            if self.valid_path(root_path):
+                root_path = self.root_path
+
+        if destination_path is None:
+            destination_path = self.root_path
+        else:
+            if self.valid_path(destination_path):
+                destination_path = destination_path
+
+        # Check for ignore files
+        to_ignore = False
+        if isinstance(ignore, list):
+            to_ignore = True
+
+        if not os.path.exists(root_path):
+            raise Exception("ERROR", f"The root Path {root_path} does not exist.")
+
+        if not os.path.exists(destination_path):
+            # Copy everything
+            # shutil.copytree(root_path, destination_path, ignore=shutil.ignore_patterns(*ignore))
+
+            # Copy only the files to work off
+            for item in os.listdir(root_path):
+                if to_ignore and item in ignore:
+                    continue
+
+                origen_item = os.path.join(root_path, item)
+                destino_item = os.path.join(destination_path, item)
 
                 if os.path.isdir(origen_item):
-                    if item in self.ignorar:
-                        print(f"[Ignorado]: {item}")
-                        continue  # Ignorar directorio
-                    shutil.copytree(origen_item, destino_item, dirs_exist_ok=True,
-                                    ignore=shutil.ignore_patterns(*self.ignorar))
+                    shutil.copytree(origen_item, destino_item, dirs_exist_ok=True)
                 else:
-                    if any(shutil.fnmatch.fnmatch(item, pattern) for pattern in self.ignorar):
-                        continue  # Ignorar archivo
-
-                    # Ensure destination folder exists
                     os.makedirs(os.path.dirname(destino_item), exist_ok=True)
                     shutil.copy2(origen_item, destino_item)
+        else:
+            raise Exception("ERROR", f"The destination Path {destination_path} already exist.")
 
-    def ordenar(self,
-                markdown,
-                ascendente=True):
-        bloques_pattern = re.compile('|'.join(self.patrones_bloques), re.DOTALL)
+    def funct_format_name(self, name, is_dir=False):
+        """
+        Format name of the directory or file.
 
-        def reemplazar_bloque(match):
-            self.bloques_ignorados.append(match.group(0))
-            return f"__BLOQUE_IGNORADO_{len(self.bloques_ignorados) - 1}__"
+        Args:
+            name (str): Name of the directory or file.
+            is_dir(bool): Tells if is a directory.
 
-        markdown_sin_bloques = bloques_pattern.sub(reemplazar_bloque, markdown)
+        Returns:
+            str: Name formated.
+        """
+        if is_dir:
+            return name.upper()
+        else:
+            name_not_ext, _ = os.path.splitext(name)
+            if name_not_ext.startswith('_'):
+                return name_not_ext
+            name_not_ext = name_not_ext.replace('_', ' ').strip()
+            return name_not_ext.capitalize()
 
-        pattern = re.compile(r'^(#+\s+.*?)(?=\n#+\s+|\Z)', re.MULTILINE | re.DOTALL)
-        secciones = []
+    def generate_markdown_toc(self, root_path, level=0, parent_index="", is_root=False):
+        """
+        Generates a table of contents in markdown based on the structure of directories and subdirectories.
 
-        for match in pattern.finditer(markdown_sin_bloques):
-            encabezado_bloque = match.group(1).strip()
-            nivel = len(re.match(r'^(#+)', encabezado_bloque).group(1))
-            secciones.append({
-                'nivel': nivel,
-                'texto': encabezado_bloque,
-                'hijos': []
-            })
+        Args:
+            root_path (str): Base path of the directory.
+            level (int): Depth level in the structure (for subdirectories).
+            parent_index (str): The index of the parent directory to keep numbering.
+            is_root (bool): Indicates whether we are at the root to use readable numbers.
 
-        estructura = []
-        pila = []
+        Returns:
+            str: TOC in Markdown format.
+        """
+        elements = []
+        local_index = 1
 
-        for seccion in secciones:
-            while pila and pila[-1]['nivel'] >= seccion['nivel']:
-                pila.pop()
+        # List of directories and files in the base path, ignoring hidden and those in the IGNORE list
+        for name in sorted(os.listdir(root_path)):
+            if self.has_ignore(name):
+                continue
 
-            if pila:
-                pila[-1]['hijos'].append(seccion)
+            full_path = os.path.join(root_path, name)
+            absolute_path = os.path.abspath(full_path)
+
+            # Create hierarchical index (use readable numbers in root)
+            if is_root:
+                current_index = f"{local_index}."
             else:
-                estructura.append(seccion)
+                current_index = f"{parent_index}{local_index}."
 
-            pila.append(seccion)
+            format_name = self.funct_format_name(name, is_dir=os.path.isdir(full_path))
 
-        # Ordenar según el parámetro ascendente o descendente
-        def ordenar_nodos(nodos):
-            nodos.sort(key=lambda x: x['texto'].lower(), reverse=not ascendente)
-            for nodo in nodos:
-                ordenar_nodos(nodo['hijos'])
+            if os.path.isdir(full_path) and not os.path.islink(full_path):
+                # If it is a directory, add to TOC with absolute link and process recursively
+                elements.append(f"{'  ' * level}- {current_index} [{format_name}/]({absolute_path}/)")
+                sub_elementos = self.generate_markdown_toc(full_path, level + 1, current_index)
+                elements.append(sub_elementos)
+            else:
+                # If it is a file, add it to the TOC with an absolute link
+                elements.append(f"{'  ' * level}- {current_index} [{format_name}]({absolute_path})")
 
-        ordenar_nodos(estructura)
+            local_index += 1
 
-        def reconstruir_markdown(nodos):
-            resultado = []
-            for nodo in nodos:
-                resultado.append(nodo['texto'])
-                resultado.extend(reconstruir_markdown(nodo['hijos']))
-            return resultado
+        return "\n".join(elements)
 
-        markdown_ordenado = '\n\n'.join(reconstruir_markdown(estructura))
+    def create_toc(self):
+        """
+        Create the TOC.md file with the contents of the generated TOC.
+        """
+        toc = self.generate_markdown_toc(self.destination_path, is_root=True)
 
-        def restaurar_bloques(texto):
-            for i, bloque in enumerate(self.bloques_ignorados):
-                texto = texto.replace(f"__BLOQUE_IGNORADO_{i}__", bloque)
-            return texto
-
-        return restaurar_bloques(markdown_ordenado)
+        try:
+            # Save the TOC to the TOC.md file
+            with open(os.path.join(self.destination_path, self.output_toc_filename), 'w') as toc_file:
+                toc_file.write("# Table of Contents\n\n")
+                toc_file.write(toc)
+                print(f"The {self.output_toc_filename} file generated successfully with:\n"
+                    f"\t* Destination path: '{self.destination_path}'\n"
+                    f"\t* Ignoring the directories and file on the ignore list: [{', '.join(self.ignore)}]\n"
+                    f"\t* To {self.destination_path}/{self.output_toc_filename} Path.\r\n")
+        except:
+            raise Exception("ERROR", f"The TOC could not be generated because the path {self.destination_path} is not a directory.")

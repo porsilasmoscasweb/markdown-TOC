@@ -1,6 +1,9 @@
 import os
 import pytest
-from mdTOC.TOC import MarkdownTOCGenerator
+from mdTOC.core import MdToc
+
+ABSPATH = os.path.abspath('')
+INPUT_DIR = ABSPATH + "/test"
 
 @pytest.fixture
 def generador():
