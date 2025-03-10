@@ -175,6 +175,8 @@ class MdToc:
 
             full_path = os.path.join(root_path, name)
             absolute_path = os.path.abspath(full_path)
+            less_path = os.path.abspath(self.destination_path)
+            link_to = absolute_path.replace(less_path, '.')
 
             # Create hierarchical index (use readable numbers in root)
             if is_root:
@@ -186,12 +188,12 @@ class MdToc:
 
             if os.path.isdir(full_path) and not os.path.islink(full_path):
                 # If it is a directory, add to TOC with absolute link and process recursively
-                elements.append(f"{'  ' * level}- {current_index} [{format_name}/]({absolute_path}/)")
+                elements.append(f"{'  ' * level}- {current_index} [{format_name}/]({link_to}/)")
                 sub_elementos = self.generate_markdown_toc(full_path, level + 1, current_index)
                 elements.append(sub_elementos)
             else:
                 # If it is a file, add it to the TOC with an absolute link
-                elements.append(f"{'  ' * level}- {current_index} [{format_name}]({absolute_path})")
+                elements.append(f"{'  ' * level}- {current_index} [{format_name}]({link_to})")
 
             local_index += 1
 
