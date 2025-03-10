@@ -49,6 +49,7 @@ def test_diff_root_than_destination_path_args():
     root_path = INPUT_DIR + "/test_default"
     destination_path = INPUT_DIR + "/test_dir"
     toc_filename = destination_path + "/TOC.md"
+    rmtree(destination_path)
     try:
         MarkdownTOCFiles(root_path, destination_path)
         assert os.path.exists(destination_path)
@@ -61,6 +62,7 @@ def test_toc_args():
     root_path = INPUT_DIR + "/test_default"
     destination_path = INPUT_DIR + "/test_dir"
     toc_filename = destination_path + "/TOC.md"
+    rmtree(destination_path)
     try:
         generador = MarkdownTOCFiles(root_path, destination_path)
         generador.create_toc()
@@ -74,6 +76,7 @@ def test_toc_output_file_name_args():
     root_path = INPUT_DIR + "/test_default"
     destination_path = INPUT_DIR + "/test_dir"
     toc_filename = destination_path + "/test_TOC_file_name.md"
+    rmtree(destination_path)
     try:
         generador = MarkdownTOCFiles(root_path, destination_path=destination_path, output_toc_filename="test_TOC_file_name")
         generador.create_toc()
@@ -88,6 +91,7 @@ def test_toc_ignore_dir():
     root_path = INPUT_DIR + "/test_default"
     destination_path = INPUT_DIR + "/test_dir"
     toc_filename = destination_path + "/TOC.md"
+    rmtree(destination_path)
     try:
         generador = MarkdownTOCFiles(root_path, destination_path=destination_path, ignore=["ignore_dir"])
         generador.create_toc()
@@ -101,6 +105,7 @@ def test_toc_ignore_file():
     root_path = INPUT_DIR + "/test_default"
     destination_path = INPUT_DIR + "/test_dir"
     toc_filename = destination_path + "/TOC.md"
+    rmtree(destination_path)
     try:
         generador = MarkdownTOCFiles(root_path, destination_path=destination_path, ignore=["ignore_file1.md"])
         generador.create_toc()
@@ -114,6 +119,7 @@ def test_toc_ignore_dir_and_file():
     root_path = INPUT_DIR + "/test_default"
     destination_path = INPUT_DIR + "/test_dir"
     toc_filename = destination_path + "/TOC.md"
+    rmtree(destination_path)
     try:
         generador = MarkdownTOCFiles(root_path, destination_path=destination_path, ignore=["ignore_dir", "ignore_file1.md"])
         generador.create_toc()
@@ -127,6 +133,7 @@ def test_toc_ignore_dir_and_file():
 def test_ERROR_destination_path_exists():
     root_path = INPUT_DIR + "/test_default"
     destination_path = INPUT_DIR + "/test_dir"
+    rmtree(destination_path)
     try:
         MarkdownTOCFiles(root_path, destination_path=destination_path)
         MarkdownTOCFiles(root_path, destination_path=destination_path)
